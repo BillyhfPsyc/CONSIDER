@@ -15,14 +15,13 @@
   
 
   .home-wrapper {
-    background: white;
+    background: none; /* or remove this line entirely */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: #111; /* override global white text */
+    color: #111;
     animation: fadeIn 1.2s ease-in-out both;
-
   }
 
   

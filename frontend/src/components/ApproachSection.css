@@ -1,0 +1,94 @@
+.approach-section {
+    background: #f9fafb;
+    padding: 6rem 2rem;
+    width: 100%;
+    color: #1f2937;
+  }
+  
+  .approach-heading-wrapper {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .approach-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+  
+  .approach-subtitle {
+    font-size: 1.2rem;
+    color: #6b7280;
+    margin-bottom: 1rem;
+  }
+  
+  .underline {
+    width: 60px;
+    height: 4px;
+    background: #4f46e5;
+    margin: 0 auto;
+  }
+  
+  .approach-grid {
+    display: grid;
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  
+  @media (min-width: 768px) {
+    .approach-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .approach-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+    text-align: center;
+  }
+  
+  .approach-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem auto;
+  }
+  
+  .indigo {
+    background: #e0e7ff;
+    color: #4f46e5;
+  }
+  
+  .purple {
+    background: #ede9fe;
+    color: #7c3aed;
+  }
+  
+  .blue {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+  
+  .approach-icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .approach-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  .approach-card p {
+    font-size: 1rem;
+    color: #4b5563;
+    line-height: 1.6;
+  }
+  

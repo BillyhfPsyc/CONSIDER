@@ -1,0 +1,118 @@
+.how-section {
+    background: #f9fafb;
+    padding: 6rem 2rem;
+    width: 100%;
+    color: #1f2937;
+  }
+  
+  .how-heading-wrapper {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .how-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+  
+  .how-subtitle {
+    font-size: 1.2rem;
+    color: #6b7280;
+    margin-bottom: 1rem;
+  }
+  
+  .underline {
+    width: 60px;
+    height: 4px;
+    background: #4f46e5;
+    margin: 0 auto;
+  }
+  
+  /* Stage progress bar */
+  .how-stages {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 4rem auto 3rem;
+    max-width: 700px;
+  }
+  
+  .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .stage-indicator {
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    background: #e5e7eb;
+    color: #4b5563;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .stage-indicator.active {
+    background: #4f46e5;
+    color: white;
+  }
+  
+  .stage h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
+  
+  .stage-connector {
+    height: 2px;
+    background: #e5e7eb;
+    flex-grow: 1;
+    max-width: 80px;
+  }
+  
+  /* Cards */
+  .how-cards {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2rem;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  @media (min-width: 768px) {
+    .how-cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .how-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+    text-align: center;
+  }
+  
+  .card-icon {
+    color: #4f46e5;
+    margin-bottom: 1rem;
+  }
+  
+  .how-card h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+  
+  .how-card p {
+    color: #4b5563;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
