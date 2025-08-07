@@ -1,0 +1,88 @@
+/* index.css */
+
+/* Google Fonts (if you haven’t added the <link> in index.html) */
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@600&display=swap'); */
+
+:root {
+  /* Palette */
+  --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --nav-bg: #5b50ae;        /* new deep-purple from your gradient */
+  --primary: #4f46e5;
+  --accent: #10b981;
+  --text-main: #ffffff;
+  --text-muted: #e2e8f0;
+  --surface: #ffffff;
+
+  /* Sizing */
+  --radius: 0.5rem;
+  --spacing: 1rem;
+
+  /* Fonts */
+  --font-base: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Poppins', system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-base);
+  background: var(--bg);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: inherit;
+}
+
+button {
+  font-family: var(--font-base);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.6em 1.2em;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: var(--surface);
+  color: var(--text-main);
+  transition: background 0.25s, color 0.25s, border-color 0.25s;
+}
+
+button:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+ul, ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

@@ -1,0 +1,50 @@
+.debate-intro-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+    min-height: 100vh;
+  }
+  
+  .intro-text-box {
+    max-width: 700px;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .intro-header {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0.8rem 0 1.2rem 0;
+  }  
+
+  .intro-line {
+    font-size: 1.75rem;
+    margin: 1rem 0;
+    animation: fadeIn 0.4s ease;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  
+  .robot-click {
+    width: 100px;
+    cursor: pointer;
+    animation: float 2s ease-in-out infinite;
+    transition: transform 0.2s ease;
+  }
+  
+  .robot-click:hover {
+    transform: scale(1.05);
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+  

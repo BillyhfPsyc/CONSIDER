@@ -1,0 +1,117 @@
+/* src/Chat.css */
+
+/* Chat container styling */
+.chat-container {
+    max-width: 600px;
+    margin: 80px auto 40px;
+    background: var(--surface);             /* white background for content */
+    color: #1f2937;                         /* dark text for readability */
+    border-radius: var(--radius);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: var(--spacing);
+  }
+  
+  /* Title styling */
+  .chat-container h2 {
+    font-family: var(--font-heading);
+    text-align: center;
+    margin-bottom: var(--spacing);
+    color: #1f2937;
+  }
+  
+  /* Chat messages area */
+  .chat-box {
+    max-height: 400px;
+    overflow-y: auto;
+    background: #f9fafb;                    /* light gray backing for messages */
+    border-radius: var(--radius);
+    padding: var(--spacing);
+  }
+  
+  /* Individual message bubbles */
+  .message {
+    margin-bottom: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    max-width: 80%;
+    line-height: 1.4;
+  }
+  
+  /* User messages */
+  .user-message {
+    background: var(--primary);
+    color: white;
+    margin-left: auto;
+  }
+  
+  /* Bot messages */
+  .bot-message {
+    background: var(--surface);
+    border: 1px solid #e5e7eb;              /* light gray border */
+    color: #1f2937;
+    margin-right: auto;
+  }
+  
+  /* Input area styling */
+  .chat-input-area {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: var(--spacing);
+  }
+  
+  .chat-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;              /* light gray */
+    border-radius: var(--radius);
+    font-size: 1rem;
+    color: #1f2937;
+  }
+  
+  .send-button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0 1rem;
+    cursor: pointer;
+  }
+  
+  .send-button:hover {
+    opacity: 0.9;
+  }
+  
+  .clear-button {
+    margin-top: var(--spacing);
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.5rem 1rem;
+    display: block;
+    margin-left: auto;
+    cursor: pointer;
+  }
+  
+  .clear-button:hover {
+    opacity: 0.9;
+  }
+  
+  .chat-input {
+    resize: none;
+    overflow: hidden;
+  }
+
+.typing-indicator {
+  font-style: italic; /* Make the text italic */
+  font-family: "Courier New", Courier, monospace; /* Use a loading-style font */
+  color: #888; /* Light gray color */
+  animation: typing-blink 1.5s infinite; /* Add a blinking effect */
+}
+
+/* Blinking effect for the typing indicator */
+@keyframes typing-blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
