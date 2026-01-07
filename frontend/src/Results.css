@@ -1,0 +1,107 @@
+:root {
+    --results-bg: #1e293b;
+    --card-bg: #334155;
+    --text-main: #ffffff;
+    --text-muted: #e2e8f0;
+    --accent: #3b82f6;
+    --border: rgba(255, 255, 255, 0.2);
+    --shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+    --radius: 18px;
+    --space: 20px;
+    --space-lg: 28px;
+    --maxw: 820px;
+  }
+  
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: var(--results-bg);
+    font-family: system-ui, sans-serif;
+    color: var(--text-main);
+  }
+  
+  .results-wrapper {
+    min-height: 100vh;
+    padding: calc(var(--space) * 2) var(--space);
+    padding-top: 100px; /* NEW: pushes card down below top bar */
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  
+  .results-card {
+    width: 100%;
+    max-width: var(--maxw);
+    min-height: 70vh;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: clamp(20px, 4vw, 36px);
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 320ms ease-out;
+  }
+  
+  .results-title {
+    margin: 0 0 8px 0;
+    font-size: clamp(20px, 2.2vw, 28px);
+    line-height: 1.2;
+    letter-spacing: 0.2px;
+    color: var(--text-main);
+  }
+  
+  .results-title::after {
+    content: "";
+    display: block;
+    width: 56px;
+    height: 3px;
+    margin-top: 10px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    border-radius: 2px;
+  }
+  
+  .results-text {
+    margin: 0 0 var(--space-lg) 0;
+    font-size: clamp(14px, 1.6vw, 16px);
+    line-height: 1.65;
+    color: var(--text-muted);
+  }
+  
+  .results-placeholder {
+    display: grid;
+    gap: 10px;
+    flex-grow: 1; /* let the placeholders stretch to fill card height */
+  }
+  
+  .placeholder-line {
+    height: 14px;
+    border-radius: 8px;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.18) 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.18) 100%
+    );
+    background-size: 200px 100%;
+    animation: shimmer 1.6s infinite linear;
+  }
+  
+  .placeholder-line.short {
+    width: 55%;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -200px 0; }
+    100% { background-position: 200px 0; }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .results-card { animation: none; }
+    .placeholder-line { animation: none; }
+  }

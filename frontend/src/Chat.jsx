@@ -1,194 +1,253 @@
 // src/Chat.jsx
-import React, { useState, useRef, useEffect } from 'react';
-import './ChatBase.css';
+import React, { useState, useRef, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Sparkles } from "lucide-react";
 import { sendDebateChat, createProfile } from "./api";
-import { useLocation, useNavigate } from 'react-router-dom';
+import ChatInput from "./components/chat/ChatInput.jsx";
+import MessageBubble from "./components/chat/MessageBubble.jsx";
 
 function Chat() {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const passedConversationId = location.state?.conversationId;
   const summary = location.state?.summary;
   const topic = location.state?.topic;
 
-  const [conversationId, setConversationId] = useState('');
+  const [conversationId, setConversationId] = useState("");
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-
-  const [profile, setProfile] = useState(''); // Store the generated profile
-
-  const textareaRef = useRef(null);
-  const chatBoxRef = useRef(null);
-
-  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes = 300 seconds
+  const [profile, setProfile] = useState("");
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
+  const [isLoading, setIsLoading] = useState(false);
 
   const hasInitialized = useRef(false);
+  const messagesEndRef = useRef(null);
 
-  const navigate = useNavigate();
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
+
+  // Hard redirect to results after 5 minutes
   useEffect(() => {
     const timeout = setTimeout(() => {
-      navigate('/results');
-    }, 5 * 60 * 1000); // Redirect to results after 5 minutes
+      navigate("/results");
+    }, 5 * 60 * 1000);
 
-    return () => clearTimeout(timeout); // Cleanup on unmount
-  }, []);
+    return () => clearTimeout(timeout);
+  }, [navigate]);
 
-  // Setup conversation on mount
-  useEffect(() => {
-    if (hasInitialized.current) return; // Prevent re-initialization
-    hasInitialized.current = true;
-    if (!summary || !topic) {
-      console.warn("Missing topic or summary — redirecting to homepage");
-      navigate('/');
-      return;
-    }
-  
-    const startDebate = async (convId) => {
-      try {
-        const res = await createProfile(convId, topic, summary);
-        setProfile(res.data.profile); // Store the generated profile
-        console.log("✅ Profile generated:", res.data.profile);
-      } catch (err) {
-        console.error("❌ Failed to generate profile:", err);
-      }
-    };
-    
-    if (passedConversationId) {
-      setConversationId(passedConversationId);
-      setMessages([
-        { sender: 'bot', text: `Great. Let's begin the debate on: ${topic}` },
-        { sender: 'bot', text: `You believe: "${summary}" — I will now take the opposing position.` }
-      ]);
-      startDebate(passedConversationId);
-    } else {
-      const newId = crypto.randomUUID();
-      sessionStorage.setItem("conversationId", newId);
-      setConversationId(newId);
-      setMessages([{ sender: 'bot', text: "Hello! What would you like to debate today?" }]);
-      startDebate(newId);
-    }
-  }, []);
-
+  // Countdown timer
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimeLeft(prev => {
+      setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
           return 0;
         }
         return prev - 1;
       });
-    }, 1000); // tick every second
-  
+    }, 1000);
+
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-resize
+  // Setup conversation + profile
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [input]);
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
 
-  // Auto-scroll
-  useEffect(() => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    if (!summary || !topic) {
+      console.warn("Missing topic or summary — redirecting to homepage");
+      navigate("/");
+      return;
     }
-  }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
-    const userText = input;
-    setInput('');
-    setMessages(prev => [...prev, { sender: 'user', text: userText }, { sender: 'bot', text: 'CONSIDER is typing...' }]);
-  
+    const startDebate = async (convId) => {
+      try {
+        const res = await createProfile(convId, topic, summary);
+        setProfile(res.data.profile);
+        console.log("✅ Profile generated:", res.data.profile);
+      } catch (err) {
+        console.error("❌ Failed to generate profile:", err);
+      }
+    };
+
+    if (passedConversationId) {
+      setConversationId(passedConversationId);
+      setMessages([
+        {
+          sender: "bot",
+          text: `Great. Let's begin a conversation on the topic: ${topic}.`,
+        },
+      ]);
+      startDebate(passedConversationId);
+    } else {
+      const newId = crypto.randomUUID();
+      sessionStorage.setItem("conversationId", newId);
+      setConversationId(newId);
+      setMessages([
+        {
+          sender: "bot",
+          text: "Hello! What would you like to discuss today?",
+        },
+      ]);
+      startDebate(newId);
+    }
+  }, [navigate, passedConversationId, summary, topic]);
+
+  const handleSendMessage = async (content) => {
+    const text = content.trim();
+    if (!text || isLoading) return;
+
+    setMessages((prev) => [...prev, { sender: "user", text }]);
+    setIsLoading(true);
+
     try {
-      const res = await sendDebateChat(conversationId, userText, topic, summary, profile);
-
-  
+      const res = await sendDebateChat(
+        conversationId,
+        text,
+        topic,
+        summary,
+        profile
+      );
       const reply = res.data.reply;
-      setMessages(prev => [
-        ...prev.slice(0, -1),
-        { sender: 'bot', text: reply }
-      ]);
+      setMessages((prev) => [...prev, { sender: "bot", text: reply }]);
     } catch (err) {
-      console.error('Chat API error:', err);
-      setMessages(prev => [
-        ...prev.slice(0, -1),
-        { sender: 'bot', text: 'I`m tired.....i`m gonna have a nap.' }
+      console.error("Chat API error:", err);
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "bot",
+          text: "Sorry, something went wrong while generating a reply.",
+        },
       ]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleKeyDown = e => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
+  const handleEndConversation = () => {
+    navigate("/results");
   };
 
-// Delete?
-  const handleClear = () => {
-    const newId = crypto.randomUUID();
-    sessionStorage.setItem("conversationId", newId);
-    setConversationId(newId);
-    setMessages([{ sender: 'bot', text: "Hello! What would you like to discuss today?" }]);
-    setInput('');
-  };
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = (timeLeft % 60).toString().padStart(2, "0");
+
   return (
-    <div className="chat-container">
-      {/* Header */}
-      <div className="page-header">
-        <span className="page-title">Discussion</span>
-      </div>
-      <p className="page-subtitle">
-        You will now engage in a discussion with an AI that has an opposing opinion to you. Freely discuss the topic, as you would with another person.
-      </p>
-      <p style={{ textAlign: 'center', fontWeight: 'bold', marginTop: '0.5rem', color: '#444' }}>
-        ⏳ Time remaining: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
-      </p>
-  
-      {/* Messages */}
-      <div className="chat-box" ref={chatBoxRef}>
-        {messages.map((m, i) => (
-          <div key={i} className={`message-wrapper ${m.sender}`}>
-            {m.sender === 'bot' && (
-              <img src="public/robot.png" alt="Bot" className="bot-avatar" />
-            )}
-            <div className={`message ${m.sender}-message`}>
-              {m.text === "DebateBot is typing..." ? (
-                <span className="typing-indicator">{m.text}</span>
-              ) : (
-                m.text
-              )}
+    <div className="flex flex-col min-h-[calc(100vh-8rem)]">
+      {/* Messages area */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-4xl mx-auto px-6 py-8 min-h-[60vh]">
+          <div className="rounded-3xl border border-white/10 bg-slate-900/40 shadow-xl shadow-black/30 p-6 md:p-8 flex flex-col gap-6">
+            {/* Header */}
+            <div className="text-center mb-2 space-y-2">
+              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
+                Discussion
+              </h1>
+              <p className="text-sm md:text-base text-slate-200 max-w-2xl mx-auto">
+                You will now engage in a discussion with an AI that has an
+                opposing opinion to you. Freely discuss the topic as you would
+                with another person.
+              </p>
+              <p className="text-xs md:text-sm text-slate-400">
+                Topic:{" "}
+                <span className="font-semibold text-cyan-300">{topic}</span>
+              </p>
+              <p className="mt-2 font-semibold text-sm md:text-base text-slate-100">
+                ⏳ Time remaining:{" "}
+                <span className="font-mono">
+                  {minutes}:{seconds}
+                </span>
+              </p>
             </div>
+
+            {/* Messages */}
+            {messages.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center py-12 md:py-16 flex-1 flex flex-col items-center justify-center"
+              >
+                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/20 flex items-center justify-center mx-auto mb-6">
+                  <Sparkles className="w-10 h-10 text-cyan-400" />
+                </div>
+
+                <h2 className="text-2xl font-semibold text-white mb-3">
+                  Welcome to the discussion
+                </h2>
+
+                <p className="text-slate-400 max-w-md mx-auto mb-2">
+                  Start by sharing your first message about{" "}
+                  <span className="font-semibold text-cyan-300">{topic}</span>.
+                </p>
+              </motion.div>
+            ) : (
+              <div className="space-y-6 flex-1 flex flex-col">
+                <AnimatePresence mode="popLayout">
+                  {messages.map((m, i) => (
+                    <MessageBubble
+                      key={`${m.sender}-${i}`}
+                      message={m.text}
+                      isUser={m.sender === "user"}
+                    />
+                  ))}
+                </AnimatePresence>
+
+                {isLoading && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex gap-3 max-w-3xl"
+                  >
+                    <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
+                      <Sparkles className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="px-5 py-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10">
+                      <div className="flex gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" />
+                        <span
+                          className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce"
+                          style={{ animationDelay: "150ms" }}
+                        />
+                        <span
+                          className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce"
+                          style={{ animationDelay: "300ms" }}
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                <div ref={messagesEndRef} />
+              </div>
+            )}
           </div>
-        ))}
+        </div>
       </div>
-  
-      {/* Input */}
-      <div className="chat-input-area">
-        <textarea
-          ref={textareaRef}
-          className="chat-input"
-          placeholder="Type your argument..."
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          rows={1}
-        />
-        <button className="send-button" onClick={handleSend}>Send</button>
-      </div>
-  
-      {/* Clear */}
-      {/* <button className="clear-button" onClick={handleClear}>Clear Chat</button> */}
-      <div className="proceed-button-wrapper">
-        <button className="proceed-button" onClick={() => navigate('/results')}>
-          End Debate
-        </button>
+
+      {/* Input + end button */}
+      <div className="border-t border-white/5">
+        <div className="max-w-4xl mx-auto px-6 py-4 space-y-3">
+          <ChatInput onSend={handleSendMessage} isLoading={isLoading} />
+
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={handleEndConversation}
+              className="inline-flex items-center justify-center rounded-full bg-white/5 px-4 py-2 text-xs md:text-sm font-semibold text-slate-200 border border-white/15 hover:bg-white/10 hover:border-cyan-400/60 transition-colors"
+            >
+              End conversation and see results
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
-export default Chat;  
+
+export default Chat;

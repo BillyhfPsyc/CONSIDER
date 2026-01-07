@@ -15,25 +15,17 @@ const client = new MongoClient(process.env.ATLAS_URI, {
   }
 });
 
-// Declare a variable to store the database object once the connection is established.
-// This variable will be used to interact with the database.
+
 let database;
 
-// Export two functions so other parts of the application can use them to connect to the database and access it.
 module.exports = {
-    // Function to connect to the database.
-    // This function sets up a connection to the "Test" database and stores the database object in the `database` variable.
     connectToServer: () => {
-        database = client.db("Test"); // Connect to the "Test" database.
+        database = client.db("Consider"); 
     }, 
-    // Function to get the database object.
-    // This function returns the database object so other parts of the application can use it to interact with the database.
     getDB: () => {
-        return database; // Return the database object.
+        return database; 
     }
-} // --> basically, anything specified in the module.exports field can be imported to another file via keyword 'require'. 
-
-// console.log("I be here, I be sentient.")
+} 
 
 
 

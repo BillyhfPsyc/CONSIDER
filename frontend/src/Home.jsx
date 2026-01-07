@@ -1,26 +1,325 @@
 // src/Home.jsx
-import React from 'react';
-import HeroSection from './components/HeroSection';
-import { Link } from 'react-router-dom';
-import './Home.css'; // still holds styles for the robot
-import ChallengeSection from './components/ChallengeSection';
-import HowItWorksSection from './components/HowItWorksSection';
-import ApproachSection from './components/ApproachSection';
-
+import React from "react";
+import { Link } from "react-router-dom";
+import {
+  Sparkles,
+  AlertTriangle,
+  MessageCircleOff,
+  ArrowLeftRight,
+  Search,
+  MessageCircle,
+  BarChart3,
+  Atom,
+  Brain,
+  Bot,
+} from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="home-wrapper">
-      <HeroSection />
-      <ChallengeSection />
-      <HowItWorksSection />
-      <ApproachSection />
-      <div className="robot-container">
-        <Link to="/debate-intro" className="robot-link">
-          <img src="/robot.png" alt="Robot" className="robot-image" />
-        </Link>
-      </div>
+    <div className="relative">
+      {/* HERO */}
+      <section className="relative min-h-screen flex items-start justify-center px-6 pt-10 md:pt-14 overflow-hidden">
+
+        {/* Main hero content */}
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          {/* Big image */}
+          <div className="w-full flex justify-center py-10">
+            <h1 className="text-6xl md:text-8xl font-black tracking-tight 
+                          bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500
+                          text-transparent bg-clip-text drop-shadow-2xl">
+              CONSIDER
+            </h1>
+          </div>
+
+
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-5 leading-tight tracking-tight">
+            Navigate{" "}
+            <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Polarised Topics
+            </span>
+            <br />
+            with Thoughtful Dialogue
+          </h1>
+
+
+          <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+            CONSIDER is an AI platform for structured reflection on complex,
+            divisive issues through principled disagreement.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              to="/debate-intro"
+              className="inline-flex items-center justify-center bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white px-8 py-6 text-lg rounded-full shadow-2xl shadow-cyan-500/25 transition-all duration-300 hover:shadow-cyan-500/40 hover:scale-105"
+            >
+              Start the Demo
+              <Sparkles className="w-5 h-5 ml-2" />
+            </Link>
+
+            <a
+              href="#how-it-works"
+              className="inline-flex items-center justify-center border border-slate-700 text-slate-200 hover:bg-white/5 px-8 py-6 text-lg rounded-full transition-colors"
+            >
+              Learn More
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* CHALLENGE SECTION */}
+      <section className="py-24 px-6 bg-slate-950/70">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
+              The Challenge of Polarised Discourse
+            </h2>
+            <div className="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mx-auto mb-6" />
+          </div>
+
+          <div className="grid lg:grid-cols-[1.4fr,1fr] gap-10 items-start">
+            {/* Text */}
+            <div className="space-y-5 text-slate-200 text-base md:text-lg leading-relaxed">
+              <p>
+                Polarised disagreement on high-stakes issues like immigration,
+                climate change, and identity politics strains democratic
+                discourse and public wellbeing. Conversations often devolve into
+                bad-faith attacks, or are avoided altogether.
+              </p>
+              <p>
+                At the same time, AI is frequently used to intensify division,
+                fuelling campaigns that entrench identities and trap people in
+                ideological echo chambers. There are still very few scalable
+                tools that help individuals safely explore their own views and
+                those of others.
+              </p>
+              <p>
+                The core problem isn’t disagreement itself, but the lack of
+                structured, reflective engagement with polarised topics.
+              </p>
+            </div>
+
+            {/* Cards */}
+            <div className="space-y-4">
+              <div className="rounded-2xl bg-white/5 border border-red-500/30 p-5 shadow-lg shadow-red-900/30">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-red-500/15 flex items-center justify-center">
+                    <AlertTriangle className="w-5 h-5 text-red-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-white">
+                    Echo Chambers
+                  </h3>
+                </div>
+                <p className="text-sm md:text-base text-slate-200">
+                  Algorithms reinforce existing beliefs by repeatedly showing us
+                  aligned content, limiting exposure to genuinely different
+                  perspectives.
+                </p>
+              </div>
+
+              <div className="rounded-2xl bg-white/5 border border-yellow-400/30 p-5 shadow-lg shadow-yellow-900/30">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-yellow-400/15 flex items-center justify-center">
+                    <MessageCircleOff className="w-5 h-5 text-yellow-300" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-white">
+                    Avoidance
+                  </h3>
+                </div>
+                <p className="text-sm md:text-base text-slate-200">
+                  Many people avoid difficult conversations entirely because
+                  they worry about conflict, social fallout, or simply don’t
+                  know where to start.
+                </p>
+              </div>
+
+              <div className="rounded-2xl bg-white/5 border border-blue-500/30 p-5 shadow-lg shadow-blue-900/30">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-500/15 flex items-center justify-center">
+                    <ArrowLeftRight className="w-5 h-5 text-blue-300" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-white">
+                    Polarisation
+                  </h3>
+                </div>
+                <p className="text-sm md:text-base text-slate-200">
+                  Extreme positions tend to dominate public discourse, crowding
+                  out nuance and making it harder to recognise shared ground.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section
+        id="how-it-works"
+        className="py-24 px-6 bg-slate-950/80 border-t border-white/5"
+      >
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
+              How CONSIDER Works
+            </h2>
+            <p className="text-slate-400 max-w-2xl mx-auto">
+              A three-stage process for structured reflection and principled
+              disagreement.
+            </p>
+            <div className="w-16 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full mx-auto mt-4" />
+          </div>
+
+          {/* Stage bar */}
+          <div className="flex items-center justify-center gap-4 mb-14 max-w-xl mx-auto">
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-cyan-500 text-white font-semibold flex items-center justify-center">
+                1
+              </div>
+              <span className="mt-2 text-sm font-medium text-slate-200">
+                Clarification
+              </span>
+            </div>
+            <div className="h-[2px] flex-1 bg-slate-700" />
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-slate-700 text-slate-200 font-semibold flex items-center justify-center">
+                2
+              </div>
+              <span className="mt-2 text-sm font-medium text-slate-300">
+                Conversation
+              </span>
+            </div>
+            <div className="h-[2px] flex-1 bg-slate-700" />
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-slate-700 text-slate-200 font-semibold flex items-center justify-center">
+                3
+              </div>
+              <span className="mt-2 text-sm font-medium text-slate-300">
+                Contemplation
+              </span>
+            </div>
+          </div>
+
+          {/* Cards */}
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="rounded-2xl bg-white/5 border border-white/10 p-6 text-center shadow-lg shadow-black/30">
+              <div className="mb-3 flex justify-center">
+                <div className="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                  <Search className="w-5 h-5 text-cyan-300" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Clarify your position
+              </h3>
+              <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+                You begin by articulating your beliefs on a complex issue. The
+                AI helps you refine and structure your arguments, highlighting
+                core values and assumptions.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white/5 border border-white/10 p-6 text-center shadow-lg shadow-black/30">
+              <div className="mb-3 flex justify-center">
+                <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                  <MessageCircle className="w-5 h-5 text-blue-300" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Engage with opposition
+              </h3>
+              <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+                The system generates principled counterarguments tailored to
+                your view, letting you choose tone and depth to match your own
+                goals for the conversation.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white/5 border border-white/10 p-6 text-center shadow-lg shadow-black/30">
+              <div className="mb-3 flex justify-center">
+                <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5 text-purple-300" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Reflect and visualise
+              </h3>
+              <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+                Afterwards, you see a structured summary of your arguments,
+                values, and divergences, and can compare your pattern with
+                broader trends.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* INTERDISCIPLINARY APPROACH */}
+      <section className="py-24 px-6 bg-slate-950 border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
+              Our Interdisciplinary Approach
+            </h2>
+            <p className="text-slate-400 max-w-2xl mx-auto">
+              Combining philosophy, psychology, and AI research to support
+              constructive disagreement.
+            </p>
+            <div className="w-16 h-1 bg-gradient-to-r from-purple-400 to-cyan-400 rounded-full mx-auto mt-4" />
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="rounded-2xl bg-white/5 border border-indigo-400/40 p-6 text-center shadow-lg shadow-indigo-900/30">
+              <div className="w-14 h-14 rounded-full bg-indigo-500/20 flex items-center justify-center mx-auto mb-4">
+                <Atom className="w-7 h-7 text-indigo-300" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                Philosophy
+              </h3>
+              <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+                We draw on Mill’s trident and other normative frameworks to
+                structure disagreement in ways that respect both truth and
+                pluralism.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white/5 border border-purple-400/40 p-6 text-center shadow-lg shadow-purple-900/30">
+              <div className="w-14 h-14 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
+                <Brain className="w-7 h-7 text-purple-300" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                Psychology
+              </h3>
+              <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+                We incorporate cognitive and social psychology to reduce
+                defensiveness, support reflection, and protect wellbeing during
+                difficult conversations.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white/5 border border-cyan-400/40 p-6 text-center shadow-lg shadow-cyan-900/30">
+              <div className="w-14 h-14 rounded-full bg-cyan-500/20 flex items-center justify-center mx-auto mb-4">
+                <Bot className="w-7 h-7 text-cyan-300" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                AI research
+              </h3>
+              <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+                We design and evaluate models that can generate nuanced,
+                value-aware counterarguments, rather than simply maximising
+                persuasion or engagement.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="py-10 px-6 border-t border-white/5 bg-slate-950">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <span className="text-white font-semibold">CONSIDER</span>
+          <p className="text-slate-500 text-sm">
+            © {new Date().getFullYear()} CONSIDER project. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
-
