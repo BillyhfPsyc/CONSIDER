@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SUMMARY_PROMPT, DEBATE_PROMPT, PROFILE_PROMPT } from "./prompts";
+import { SUMMARY_PROMPT, DEBATE_PROMPT, PROFILE_PROMPT, ARGUMENT_STYLE } from "./prompts";
 
 
 const URL = "http://localhost:3001";
@@ -25,7 +25,8 @@ export function sendPositionChat(conversationId, message, topic) {
       systemPrompt: DEBATE_PROMPT(topic, profile, positionSummary),
       topic,
       context: "debate",
-      positionSummary
+      positionSummary,
+      argumentStyle: ARGUMENT_STYLE, // NEW
     });
   }
 

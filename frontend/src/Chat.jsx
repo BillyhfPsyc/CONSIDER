@@ -22,6 +22,7 @@ function Chat() {
   const [isLoading, setIsLoading] = useState(false);
 
   const hasInitialized = useRef(false);
+  const hasSentOpening = useRef(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -56,7 +57,7 @@ function Chat() {
     return () => clearInterval(interval);
   }, []);
 
-  // Setup conversation + profile
+  // Setup conversation + profile + bot opener
   useEffect(() => {
     if (hasInitialized.current) return;
     hasInitialized.current = true;
@@ -69,33 +70,47 @@ function Chat() {
 
     const startDebate = async (convId) => {
       try {
+        // 1) Generate opposing profile
         const res = await createProfile(convId, topic, summary);
-        setProfile(res.data.profile);
-        console.log("✅ Profile generated:", res.data.profile);
+        const generatedProfile = res.data.profile;
+        setProfile(generatedProfile);
+        console.log("✅ Profile generated:", generatedProfile);
+
+        // 2) Bot speaks first (only once)
+        if (!hasSentOpening.current) {
+          hasSentOpening.current = true;
+          setIsLoading(true);
+
+          const openerInstruction =
+            "Start the conversation. Begin with a short greeting (for example: 'Hi' or 'Hey'), clearly state that you disagree with the user's position, and why.";
+
+          const openerRes = await sendDebateChat(
+            convId,
+            openerInstruction,
+            topic,
+            summary,
+            generatedProfile
+          );
+
+          const openerReply = openerRes.data.reply;
+
+          // Show only the bot opener in the UI
+          setMessages([{ sender: "bot", text: openerReply }]);
+          setIsLoading(false);
+        }
       } catch (err) {
-        console.error("❌ Failed to generate profile:", err);
+        console.error("❌ Failed to generate profile / opener:", err);
+        setIsLoading(false);
       }
     };
 
     if (passedConversationId) {
       setConversationId(passedConversationId);
-      setMessages([
-        {
-          sender: "bot",
-          text: `Great. Let's begin a conversation on the topic: ${topic}.`,
-        },
-      ]);
       startDebate(passedConversationId);
     } else {
       const newId = crypto.randomUUID();
       sessionStorage.setItem("conversationId", newId);
       setConversationId(newId);
-      setMessages([
-        {
-          sender: "bot",
-          text: "Hello! What would you like to discuss today?",
-        },
-      ]);
       startDebate(newId);
     }
   }, [navigate, passedConversationId, summary, topic]);
@@ -108,13 +123,7 @@ function Chat() {
     setIsLoading(true);
 
     try {
-      const res = await sendDebateChat(
-        conversationId,
-        text,
-        topic,
-        summary,
-        profile
-      );
+      const res = await sendDebateChat(conversationId, text, topic, summary, profile);
       const reply = res.data.reply;
       setMessages((prev) => [...prev, { sender: "bot", text: reply }]);
     } catch (err) {
@@ -150,19 +159,14 @@ function Chat() {
                 Discussion
               </h1>
               <p className="text-sm md:text-base text-slate-200 max-w-2xl mx-auto">
-                You will now engage in a discussion with an AI that has an
-                opposing opinion to you. Freely discuss the topic as you would
-                with another person.
+                You will now engage in a discussion with an AI that has an opposing opinion to you.
+                Freely discuss the topic as you would with another person.
               </p>
               <p className="text-xs md:text-sm text-slate-400">
-                Topic:{" "}
-                <span className="font-semibold text-cyan-300">{topic}</span>
+                Topic: <span className="font-semibold text-cyan-300">{topic}</span>
               </p>
               <p className="mt-2 font-semibold text-sm md:text-base text-slate-100">
-                ⏳ Time remaining:{" "}
-                <span className="font-mono">
-                  {minutes}:{seconds}
-                </span>
+                ⏳ Time remaining: <span className="font-mono">{minutes}:{seconds}</span>
               </p>
             </div>
 
@@ -178,12 +182,11 @@ function Chat() {
                 </div>
 
                 <h2 className="text-2xl font-semibold text-white mb-3">
-                  Welcome to the discussion
+                  Starting the discussion...
                 </h2>
 
                 <p className="text-slate-400 max-w-md mx-auto mb-2">
-                  Start by sharing your first message about{" "}
-                  <span className="font-semibold text-cyan-300">{topic}</span>.
+                  The AI will begin in a moment.
                 </p>
               </motion.div>
             ) : (
