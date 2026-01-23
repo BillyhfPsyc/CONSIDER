@@ -32,7 +32,7 @@ router.post("/chat", async (req, res) => {
       context,
       positionSummary,
       systemPrompt,
-      argumentStyle // NEW
+      disagreeability // NEW
     } = req.body;
 
     // 🧱 Required field validation
@@ -65,7 +65,7 @@ router.post("/chat", async (req, res) => {
       content: userMessage,
       topic: topic || null,
       context,
-      argumentStyle: argumentStyle || null, // NEW
+      disagreeability: Number.isFinite(Number(disagreeability)) ? Number(disagreeability) : null,
       timestamp: new Date()
     });
     console.log("✅ User message saved with _id:", userResult.insertedId);
@@ -120,7 +120,7 @@ router.post("/chat", async (req, res) => {
       content: assistantReply,
       topic: topic || null,
       context,
-      argumentStyle: argumentStyle || null, // NEW
+      disagreeability: Number.isFinite(Number(disagreeability)) ? Number(disagreeability) : null,
       timestamp: new Date()
     });
     console.log("✅ Assistant reply saved with _id:", botResult.insertedId);

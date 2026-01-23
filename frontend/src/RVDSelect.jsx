@@ -53,7 +53,7 @@ export default function RVDSelect() {
   const navigate = useNavigate();
 
   const handleClick = (rvd) => {
-    navigate("/current-position", { state: { topic: rvd } });
+    navigate("/toggle", { state: { topic: rvd } });
   };
 
   return (

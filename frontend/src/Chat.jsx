@@ -14,6 +14,8 @@ function Chat() {
   const passedConversationId = location.state?.conversationId;
   const summary = location.state?.summary;
   const topic = location.state?.topic;
+  const disagreeability = Number(sessionStorage.getItem("disagreeability") ?? 80); // is this in the correct place??
+
 
   const [conversationId, setConversationId] = useState("");
   const [messages, setMessages] = useState([]);
@@ -89,7 +91,8 @@ function Chat() {
             openerInstruction,
             topic,
             summary,
-            generatedProfile
+            generatedProfile,
+            disagreeability
           );
 
           const openerReply = openerRes.data.reply;
@@ -123,7 +126,7 @@ function Chat() {
     setIsLoading(true);
 
     try {
-      const res = await sendDebateChat(conversationId, text, topic, summary, profile);
+      const res = await sendDebateChat(conversationId, text, topic, summary, profile, disagreeability);
       const reply = res.data.reply;
       setMessages((prev) => [...prev, { sender: "bot", text: reply }]);
     } catch (err) {

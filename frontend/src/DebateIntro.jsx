@@ -6,7 +6,7 @@ export default function DebateIntro() {
   const [showSubtitle, setShowSubtitle] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowSubtitle(true), 2000);
+    const timer = setTimeout(() => setShowSubtitle(true), 300);
     return () => clearTimeout(timer);
   }, []);
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SUMMARY_PROMPT, DEBATE_PROMPT, PROFILE_PROMPT, ARGUMENT_STYLE } from "./prompts";
+import { SUMMARY_PROMPT, DEBATE_PROMPT, PROFILE_PROMPT } from "./prompts";
 
 
 const URL = "http://localhost:3001";
@@ -18,15 +18,15 @@ export function sendPositionChat(conversationId, message, topic) {
     });
   }
 
-  export function sendDebateChat(conversationId, message, topic, positionSummary, profile) {
+  export function sendDebateChat(conversationId, message, topic, positionSummary, profile, disagreeability) {
     return axios.post(`${URL}/chat`, {
       conversationId,
       message,
-      systemPrompt: DEBATE_PROMPT(topic, profile, positionSummary),
+      systemPrompt: DEBATE_PROMPT(topic, profile, positionSummary, disagreeability),
       topic,
       context: "debate",
       positionSummary,
-      argumentStyle: ARGUMENT_STYLE, // NEW
+      disagreeability
     });
   }
 
