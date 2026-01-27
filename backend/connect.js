@@ -2,8 +2,8 @@
 // Import the MongoClient class and ServerApiVersion object from the MongoDB library.
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
-// The connection URI (Uniform Resource Identifier) for MongoDB is stored in the .env file.
-// This URI contains the address of the database server and authentication details (like username and password).
+require("dotenv").config({ path: "./config.env" });  // ← load your env here
+// ({ path: "./config.env" }); --> can add this but as Env vars are injected directly in Render, not needed there
 
 // Create a MongoClient instance to connect to the MongoDB database.
 // The MongoClientOptions object is used to configure the connection settings.
@@ -15,36 +15,19 @@ const client = new MongoClient(process.env.ATLAS_URI, {
   }
 });
 
-
 let database;
 
-module.exports = {
-    connectToServer: () => {
-        database = client.db("Consider"); 
-    }, 
-    getDB: () => {
-        return database; 
-    }
-} 
+async function connectToServer() {
+  if (database) return database;      // already connected
+  await client.connect();             // <-- THIS is the key line
+  database = client.db("Consider");
+  console.log("✅ Connected to MongoDB");
+  return database;
+}
 
+function getDB() {
+  if (!database) throw new Error("Database not initialized. Call connectToServer() first.");
+  return database;
+}
 
-
-
-
-
-
-
-
-// async function run() {
-//   try {
-//     // Connect the client to the server	(optional starting in v4.7)
-//     await client.connect();
-//     // Send a ping to confirm a successful connection
-//     await client.db("admin").command({ ping: 1 });
-//     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-//   } finally {
-//     // Ensures that the client will close when you finish/error
-//     await client.close();
-//   }
-// }
-// run().catch(console.dir);
+module.exports = { connectToServer, getDB };

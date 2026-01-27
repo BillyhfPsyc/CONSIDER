@@ -15,26 +15,37 @@ const chatRoutes = require("./chatRoutes");
 
 const app = express();
 // creates a new express application instance, which is used to handle HTTP requests and responses.
-const PORT = 3001 // url thingy
+const PORT = process.env.PORT || 3001; // this process bit is for when deployed publically
 
-app.use(cors());
+// CORS: set FRONTEND_ORIGIN on Render to your Vercel domain
+// e.g. FRONTEND_ORIGIN=https://consider-xyz.vercel.app
+// locally: FRONTEND_ORIGIN=http://localhost:5173
+const allowedOrigins = [process.env.FRONTEND_ORIGIN].filter(Boolean);
+
+app.use(
+  cors({
+    origin: allowedOrigins.length ? allowedOrigins : true,
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
-// app.use() is a method to mount middleware functions at the specified path.
-// cors() is a middleware function that enables Cross-Origin Resource Sharing, allowing the server to accept requests from different origins.
-// express.json() is a middleware function that parses incoming JSON requests and makes the data available in req.body, ensuring the format of the data is json.
 
+// Health check for Render
+app.get("/health", (req, res) => res.json({ ok: true }));
+
+// Routes
 app.use(chatRoutes);
-// This line mounts the chatRoutes middleware to handle chat-related requests.
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    connect.connectToServer(); // calls the connectToServer function to establish a connection to the MongoDB database.
-    console.log("Connected to MongoDB");
-}) // listens for incoming requests on the specified port (3001 in this case).
-
-// Simple health check endpoint to verify server is running and routes are reachable
-// app.get("/ping", (req, res) => {
-//     return res.json({ pong: true });
-//   });
-
-
+// Connect to DB first, then start server
+(async () => {
+  try {
+    await connect.connectToServer();
+    app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+  } catch (err) {
+    console.error("❌ Failed to connect to MongoDB:", err);
+    process.exit(1);
+  }
+})();
