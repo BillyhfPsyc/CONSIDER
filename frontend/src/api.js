@@ -2,7 +2,7 @@ import axios from "axios";
 import { SUMMARY_PROMPT, DEBATE_PROMPT, PROFILE_PROMPT } from "./prompts";
 
 
-const URL = "http://localhost:3001";
+const URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 // the below are basically just functions for each API endpoint that we want to call, defined in the postRoutes.js file in the backend.
 // We can use these functions in the frontend to get data from the backend.
