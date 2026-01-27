@@ -7,7 +7,7 @@ import Home from "./Home.jsx";
 import Chat from "./Chat.jsx";
 import DebateIntro from "./DebateIntro.jsx";
 import RVDSelect from "./RVDSelect.jsx";
-import Toggle from "./Toggle.jsx";
+import Toggle from "./toggle.jsx";
 import CurrentPosition from "./CurrentPosition.jsx";
 import Results from "./Results.jsx";
 import Access from "./Access.jsx";
