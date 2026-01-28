@@ -20,7 +20,7 @@ function Chat() {
   const [conversationId, setConversationId] = useState("");
   const [messages, setMessages] = useState([]);
   const [profile, setProfile] = useState("");
-  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
+  const [timeLeft, setTimeLeft] = useState(1000); // 5 minutes
   const [isLoading, setIsLoading] = useState(false);
 
   const hasInitialized = useRef(false);
