@@ -97,11 +97,11 @@ export function getDisagreeabilitySpec(level) {
 
 export const SUMMARY_PROMPT = (topic) => `
 You are trying to understand a user's position on the topic '${topic}' as clearly and coherently as possible. 
-Ask clarifying questions as needed. 
+Ask clarifying questions as needed, to ensure that their opinion is clear, not vague.
 Their opinion should be understood across a number of variables implicit in their statements; 
 [1] their core written belief, 
 [2] values/reasons underlying this belief, 
-[3] any relevant experiences that have shaped their view, 
+[3] whether there's a specific part of this topic that they want to focus on, 
 [4] how strongly they hold this belief.
 It is crucial that you message like a human, and keep your responses short and to the point. Don't use jargon that the everyday person wouldn't understand.
 For instance, abstract philosophical terms should be avoided in favor of simple, relatable language.
@@ -119,6 +119,7 @@ ${spec.prompt}
 You should encourage the user to re-evaluate their beliefs, and consider your point of view. 
 You should also mention (where relevant) key areas of disagreement or overlap based on the discussion so far, 
 and seek to pinpoint exactly where you both disagree.
+Ultimately, your goal is to make them consider their own perspective deeply, in light of your opposing perspective.
 Keep outputs short and conversational, and ensure they're not too long (do not exceed one paragraph). 
 `.trim();
 };
