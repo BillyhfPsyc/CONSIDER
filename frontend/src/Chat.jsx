@@ -20,8 +20,10 @@ function Chat() {
   const [conversationId, setConversationId] = useState("");
   const [messages, setMessages] = useState([]);
   const [profile, setProfile] = useState("");
-  const [timeLeft, setTimeLeft] = useState(1000); // 5 minutes
+  const [timeLeft, setTimeLeft] = useState(600); // total time for discussion
   const [isLoading, setIsLoading] = useState(false);
+  const [showTimeWarning, setShowTimeWarning] = useState(false);
+  const hasWarned = useRef(false);
 
   const hasInitialized = useRef(false);
   const hasSentOpening = useRef(false);
@@ -58,6 +60,17 @@ function Chat() {
 
     return () => clearInterval(interval);
   }, []);
+
+    // One-minute warning popup (shows for 5 seconds)
+    useEffect(() => {
+      if (timeLeft === 60 && !hasWarned.current) {
+        hasWarned.current = true;
+        setShowTimeWarning(true);
+  
+        const t = setTimeout(() => setShowTimeWarning(false), 5000);
+        return () => clearTimeout(t);
+      }
+    }, [timeLeft]);
 
   // Setup conversation + profile + bot opener
   useEffect(() => {
@@ -152,6 +165,28 @@ function Chat() {
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-8rem)]">
+      <AnimatePresence>
+        {showTimeWarning && (
+          <motion.div
+          initial={{ opacity: 0, y: -20, scale: 0.95 }}
+          animate={{
+            opacity: 1,
+            y: 0,
+            scale: [1, 1.05, 1],
+          }}
+          exit={{ opacity: 0, y: -20, scale: 0.95 }}
+          transition={{
+            duration: 0.6,
+            repeat: Infinity,
+            repeatType: "loop",
+            repeatDelay: 1,
+          }}
+            className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 border border-cyan-400/40 px-6 py-3 rounded-2xl shadow-xl text-white text-sm font-semibold"
+          >
+            ⏰ Less than one minute remaining — wrap up your final points!
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto px-6 py-8 min-h-[60vh]">

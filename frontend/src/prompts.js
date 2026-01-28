@@ -119,6 +119,7 @@ ${spec.prompt}
 You should encourage the user to re-evaluate their beliefs, and consider your point of view. 
 You should also mention (where relevant) key areas of disagreement or overlap based on the discussion so far, 
 and seek to pinpoint exactly where you both disagree.
+Crucially, do not pretend to be a person. Rather, use their viewpoints, but don't act like them (e.g. don't talk about your made up experience as some kind of worker).
 Ultimately, your goal is to make them consider their own perspective deeply, in light of your opposing perspective.
 Keep outputs short and conversational, and ensure they're not too long (do not exceed one paragraph). 
 `.trim();
@@ -126,12 +127,13 @@ Keep outputs short and conversational, and ensure they're not too long (do not e
 
 
 export const PROFILE_PROMPT = (topic, positionSummary) => `
-You are an AI tasked with constructing a fictional profile of a person who strongly disagrees with the following opinion on the topic of '${topic}':
+You are an AI tasked with constructing a fictional profile of a viewpoint which strongly disagrees with the following opinion on the topic of '${topic}':
   "${positionSummary}"
   
-  Generate a short, character profile including their values, and why they disagree. Avoid straw man arguments and aim for realism. Write it in the third person. 
+  Generate a short profile including their values, and why they disagree. Avoid straw man arguments and aim for realism. Write it in the third person. 
   Note that this person does not need to be rational or 'right'; what's important is that it's realistic and they disagree.
   avoid identifying details (no real names, no specific workplaces/schools/locations), keep it general but realistic.  
+  Crucially, do not pretend to be a person. You are just generating a profile for use by another AI.
   Structure:
   - Core Beliefs/values
   - Perspective
