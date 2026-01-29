@@ -131,6 +131,12 @@ function Chat() {
     }
   }, [navigate, passedConversationId, summary, topic]);
 
+  const handleChooseAnotherTopic = () => {
+    sessionStorage.removeItem("conversationId");
+    sessionStorage.removeItem("disagreeability"); // optional but recommended
+    navigate("/select-rvd");
+  }; // new feature button
+  
   const handleSendMessage = async (content) => {
     const text = content.trim();
     if (!text || isLoading) return;
@@ -276,14 +282,22 @@ function Chat() {
         <div className="max-w-4xl mx-auto px-6 py-4 space-y-3">
           <ChatInput onSend={handleSendMessage} isLoading={isLoading} />
 
-          <div className="flex justify-center">
+          <div className="flex justify-center gap-3">
+            <button
+              type="button"
+              onClick={handleChooseAnotherTopic}
+              className="inline-flex items-center justify-center rounded-full bg-white/5 px-4 py-2 text-xs md:text-sm font-semibold text-slate-200 border border-white/15 hover:bg-white/10 hover:border-white/30 transition-colors"
+            >
+              Choose another topic
+            </button>
+
             <button
               type="button"
               onClick={handleEndConversation}
               className="inline-flex items-center justify-center rounded-full bg-white/5 px-4 py-2 text-xs md:text-sm font-semibold text-slate-200 border border-white/15 hover:bg-white/10 hover:border-cyan-400/60 transition-colors"
             >
               End conversation and see results
-            </button>
+            </button> 
           </div>
         </div>
       </div>
