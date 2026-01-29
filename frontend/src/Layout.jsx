@@ -40,29 +40,35 @@ export default function Layout({ children }) {
           </Link>
 
           <div className="flex gap-2">
-            <Link
-              to="/"
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition ${
-                isHome
-                  ? "bg-white/10 text-white"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
-              }`}
-            >
+          <Link
+            to="/"
+            onClick={() => {
+              sessionStorage.removeItem("conversationId");
+            }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition ${
+              isHome
+                ? "bg-white/10 text-white"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
+            }`}
+          >
               <HomeIcon className="w-4 h-4" />
               Home
             </Link>
 
-            <Link
-              to="/debate-intro"
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition ${
-                !isHome
-                  ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/25"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
-              }`}
-            >
-              <MessageSquare className="w-4 h-4" />
-              Start
-            </Link>
+            {isHome ? (
+              <Link
+                to="/debate-intro"
+                className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/25"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Start
+              </Link>
+            ) : (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-slate-500 cursor-not-allowed opacity-60">
+                <MessageSquare className="w-4 h-4" />
+                Start
+              </div>
+            )}
           </div>
         </div>
       </nav>
