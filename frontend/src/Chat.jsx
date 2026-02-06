@@ -20,7 +20,7 @@ function Chat() {
   const [conversationId, setConversationId] = useState("");
   const [messages, setMessages] = useState([]);
   const [profile, setProfile] = useState("");
-  const [timeLeft, setTimeLeft] = useState(600); // total time for discussion
+  const [timeLeft, setTimeLeft] = useState(900); // total time for discussion
   const [isLoading, setIsLoading] = useState(false);
   const [showTimeWarning, setShowTimeWarning] = useState(false);
   const hasWarned = useRef(false);
@@ -41,7 +41,7 @@ function Chat() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       navigate("/results");
-    }, 5 * 60 * 1000);
+    }, 15 * 60 * 1000);
 
     return () => clearTimeout(timeout);
   }, [navigate]);
@@ -61,16 +61,15 @@ function Chat() {
     return () => clearInterval(interval);
   }, []);
 
-    // One-minute warning popup (shows for 5 seconds)
-    useEffect(() => {
-      if (timeLeft === 60 && !hasWarned.current) {
-        hasWarned.current = true;
-        setShowTimeWarning(true);
-  
-        const t = setTimeout(() => setShowTimeWarning(false), 5000);
-        return () => clearTimeout(t);
-      }
-    }, [timeLeft]);
+  // One-minute warning popup (shows for 5 seconds)
+  useEffect(() => {
+    if (timeLeft === 60 && !hasWarned.current) {
+      hasWarned.current = true;
+      setShowTimeWarning(true);
+      
+      setTimeout(() => setShowTimeWarning(false), 5000);
+    }
+  }, [timeLeft]);
 
   // Setup conversation + profile + bot opener
   useEffect(() => {
@@ -171,30 +170,40 @@ function Chat() {
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-8rem)]">
+      {/* Fixed Timer */}
+      <div className="fixed top-[7.5rem] left-0 w-full bg-slate-900 border-b border-cyan-400/40 px-6 py-3 z-50">
+        <div className="max-w-4xl mx-auto flex justify-between items-center">
+          <h1 className="text-lg md:text-xl font-bold text-white">
+            Topic: <span className="text-cyan-300">{topic}</span>
+          </h1>
+          <p className="text-sm md:text-base font-semibold text-slate-100">
+            ⏳ Time remaining: <span className="font-mono">{minutes}:{seconds}</span>
+          </p>
+        </div>
+      </div>
+
+      {/* One-minute warning popup */}
       <AnimatePresence>
         {showTimeWarning && (
           <motion.div
-          initial={{ opacity: 0, y: -20, scale: 0.95 }}
-          animate={{
-            opacity: 1,
-            y: 0,
-            scale: [1, 1.05, 1],
-          }}
-          exit={{ opacity: 0, y: -20, scale: 0.95 }}
-          transition={{
-            duration: 0.6,
-            repeat: Infinity,
-            repeatType: "loop",
-            repeatDelay: 1,
-          }}
-            className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 border border-cyan-400/40 px-6 py-3 rounded-2xl shadow-xl text-white text-sm font-semibold"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.5 }}
+            className="fixed inset-0 flex items-center justify-center bg-black/70 z-50"
           >
-            ⏰ Less than one minute remaining — wrap up your final points!
+            <div className="bg-slate-900 border border-cyan-400/40 px-8 py-6 rounded-2xl shadow-xl text-white text-center">
+              <h2 className="text-3xl font-bold mb-4">⏰ Time is running out!</h2>
+              <p className="text-lg">
+                Less than one minute remaining — wrap up your final points!
+              </p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
+
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto mt-[7.5rem]"> {/* Adjust for fixed timer */}
         <div className="max-w-4xl mx-auto px-6 py-8 min-h-[60vh]">
           <div className="rounded-3xl border border-white/10 bg-slate-900/40 shadow-xl shadow-black/30 p-6 md:p-8 flex flex-col gap-6">
             {/* Header */}
@@ -205,12 +214,6 @@ function Chat() {
               <p className="text-sm md:text-base text-slate-200 max-w-2xl mx-auto">
                 You will now engage in a discussion with an AI that has an opposing opinion to you.
                 Freely discuss the topic as you would with another person.
-              </p>
-              <p className="text-xs md:text-sm text-slate-400">
-                Topic: <span className="font-semibold text-cyan-300">{topic}</span>
-              </p>
-              <p className="mt-2 font-semibold text-sm md:text-base text-slate-100">
-                ⏳ Time remaining: <span className="font-mono">{minutes}:{seconds}</span>
               </p>
             </div>
 
