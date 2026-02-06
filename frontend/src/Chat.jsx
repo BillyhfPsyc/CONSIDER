@@ -96,7 +96,7 @@ function Chat() {
           setIsLoading(true);
 
           const openerInstruction =
-            "Start the conversation. Begin with a short greeting (for example: 'Hi' or 'Hey'), clearly state that you disagree with the user's position, and why.";
+            "Start the conversation. Begin with a short greeting (for example: 'Hi' or 'Hey'), clearly state that you disagree with the user's position, and why. Then ask an open-ended question to invite them to respond. Keep it concise and conversational.";
 
           const openerRes = await sendDebateChat(
             convId,
