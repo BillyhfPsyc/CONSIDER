@@ -40,6 +40,8 @@ export function sendPositionChat(conversationId, message, topic) {
       message: "Generate a fictional profile of someone who disagrees with me."
     });
   }
+
+
   
   
 // export async function getPosts() {

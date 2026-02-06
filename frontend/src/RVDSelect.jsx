@@ -9,6 +9,18 @@ const RVDs = [
     tag: "Human Rights",
   },
   {
+    label: "Abortion",
+    description:
+      "When does moral status begin, and should abortion be legally or morally permitted?",
+    tag: "Human Rights",
+  },
+  {
+    label: "Drug Legalisation",
+    description:
+      "Should drugs be legalised to reduce harm, or banned to protect society?",
+    tag: "Public Health",
+  },
+  {
     label: "Veganism",
     description: "Should we eat animal products?",
     tag: "Environment",

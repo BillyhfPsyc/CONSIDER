@@ -23,21 +23,22 @@ export default function Layout({ children }) {
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="relative">
-              <div className="absolute inset-0 bg-cyan-400 rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
-              <div className="relative bg-gradient-to-br from-cyan-400 to-blue-500 p-2.5 rounded-xl">
-                <img
-                  src={ShiftLogo}
-                  alt=""
-                  className="w-14 h-auto opacity-80"
-                />
-              </div>
+        <div className="flex items-center gap-4 select-none">
+          <div className="relative">
+            <div className="absolute inset-0 bg-cyan-400 rounded-xl blur-lg opacity-50" />
+            <div className="relative bg-gradient-to-br from-cyan-400 to-blue-500 p-2.5 rounded-xl">
+              <img
+                src={ShiftLogo}
+                alt=""
+                className="w-20 h-auto opacity-80"
+              />
             </div>
-            <span className="text-xl font-bold text-white tracking-tight">
-              CONSIDER
-            </span>
-          </Link>
+          </div>
+
+          <span className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+            CONSIDER
+          </span>
+        </div>
 
           <div className="flex gap-2">
           <Link

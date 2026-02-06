@@ -15,7 +15,8 @@ function CurrentPosition() {
   const [messages, setMessages] = useState([
     {
       sender: "bot",
-      text: `Please describe your opinion on ${topicLabel}. Feel free to include your core related beliefs, why the topic is important to you, and other information that is important to your opinion.`,
+      text: `Please describe your opinion on ${topicLabel}. Feel free to include your core related beliefs, why the topic is important to you, and other information that is important to your opinion. 
+      If there's a specific area within this topic you want to discuss, mention this in your first message. `,
     },
   ]);
   const [input, setInput] = useState("");
@@ -61,7 +62,11 @@ function CurrentPosition() {
         { sender: "bot", text: reply },
       ]);
 
-      if (reply.includes("__SUMMARY_COMPLETE__")) {
+      if (reply.includes("__SUMMARY_COMPLETE__") || 
+          reply.includes("SUMMARY_COMPLETE__") || 
+          reply.includes("__SUMMARY_COMPLETE") || 
+          reply.includes("SUMMARY_COMPLETE") 
+      ) {
         setSummaryReady(true);
       }
     } catch (err) {
