@@ -305,57 +305,88 @@ export default function Home() {
       </section>
 
       {/* INTERDISCIPLINARY APPROACH */}
-      <section className="py-24 px-6 bg-slate-950 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
-              Our Interdisciplinary Approach
-            </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto">
-              Combining philosophy, psychology, and AI research to support
-              constructive disagreement.
-            </p>
-            <div className="w-16 h-1 bg-gradient-to-r from-purple-400 to-cyan-400 rounded-full mx-auto mt-4" />
+      {false && (
+        <section className="py-24 px-6 bg-slate-950 border-t border-white/5">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
+                Our Interdisciplinary Approach
+              </h2>
+              <p className="text-slate-400 max-w-2xl mx-auto">
+                Combining philosophy, psychology, and AI research to support
+                constructive disagreement.
+              </p>
+              <div className="w-16 h-1 bg-gradient-to-r from-purple-400 to-cyan-400 rounded-full mx-auto mt-4" />
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="rounded-2xl bg-white/5 border border-indigo-400/40 p-6 text-center shadow-lg shadow-indigo-900/30">
+                <div className="w-14 h-14 rounded-full bg-indigo-500/20 flex items-center justify-center mx-auto mb-4">
+                  <Atom className="w-7 h-7 text-indigo-300" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  Philosophy
+                </h3>
+                <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+                  We draw on Mill's trident and other normative frameworks to
+                  structure disagreement in ways that respect both truth and
+                  pluralism.
+                </p>
+              </div>
+
+              <div className="rounded-2xl bg-white/5 border border-purple-400/40 p-6 text-center shadow-lg shadow-purple-900/30">
+                <div className="w-14 h-14 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
+                  <Brain className="w-7 h-7 text-purple-300" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  Psychology
+                </h3>
+                <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+                  We draw on psychological insights to create environments where people feel safe exploring different viewpoints and reflecting on their own beliefs without defensiveness.
+                </p>
+              </div>
+
+              <div className="rounded-2xl bg-white/5 border border-cyan-400/40 p-6 text-center shadow-lg shadow-cyan-900/30">
+                <div className="w-14 h-14 rounded-full bg-cyan-500/20 flex items-center justify-center mx-auto mb-4">
+                  <Bot className="w-7 h-7 text-cyan-300" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  AI research
+                </h3>
+                <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+                  We design and evaluate models that can generate nuanced,
+                  value-aware counterarguments, rather than simply maximising
+                  persuasion or engagement.
+                </p>
+              </div>
+            </div>
           </div>
+        </section>
+      )}
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="rounded-2xl bg-white/5 border border-indigo-400/40 p-6 text-center shadow-lg shadow-indigo-900/30">
-              <div className="w-14 h-14 rounded-full bg-indigo-500/20 flex items-center justify-center mx-auto mb-4">
-                <Atom className="w-7 h-7 text-indigo-300" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
-                Philosophy
-              </h3>
-              <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-                We draw on Mill's trident and other normative frameworks to
-                structure disagreement in ways that respect both truth and
-                pluralism.
+      {/* INFORMATION & PRIVACY */}
+      <section className="py-16 px-6 bg-slate-950/50 border-t border-white/5">
+        <div className="max-w-4xl mx-auto">
+          <div className="rounded-2xl bg-white/5 border border-slate-700/50 p-8">
+            <h3 className="text-lg font-semibold text-white mb-4">Information & Privacy</h3>
+            <div className="space-y-4 text-sm text-slate-300 leading-relaxed">
+              <p>
+                This is an early prototype exploring how generative AI might support structured reflection and discussion around contested or morally significant issues. The system currently uses the Llama 4 large language model and has been prompt-engineered for this specific purpose. The model's knowledge cutoff is approximately August 2024, so it may not reflect more recent events or developments.
               </p>
-            </div>
-
-            <div className="rounded-2xl bg-white/5 border border-purple-400/40 p-6 text-center shadow-lg shadow-purple-900/30">
-              <div className="w-14 h-14 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
-                <Brain className="w-7 h-7 text-purple-300" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
-                Psychology
-              </h3>
-              <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-                We draw on psychological insights to create environments where people feel safe exploring different viewpoints and reflecting on their own beliefs without defensiveness.
+              <p>
+                Conversations with the AI may be logged for research and development purposes. All logs are fully anonymised, are not linked to identifying information, and will never be shared or attributed to individual users.
               </p>
-            </div>
-
-            <div className="rounded-2xl bg-white/5 border border-cyan-400/40 p-6 text-center shadow-lg shadow-cyan-900/30">
-              <div className="w-14 h-14 rounded-full bg-cyan-500/20 flex items-center justify-center mx-auto mb-4">
-                <Bot className="w-7 h-7 text-cyan-300" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
-                AI research
-              </h3>
-              <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-                We design and evaluate models that can generate nuanced,
-                value-aware counterarguments, rather than simply maximising
-                persuasion or engagement.
+              <p>
+                This tool is experimental and provided for research and demonstration purposes only. It should not be taken as authoritative advice or as a substitute for expert judgement.
+              </p>
+              <p>
+                If you have questions, concerns, or would like further information about this project, please contact{" "}
+                <a
+                  href="mailto:billy.hohnen-ford@psych.ox.ac.uk"
+                  className="text-cyan-400 hover:text-cyan-300 transition-colors"
+                >
+                  david.lyreskog@psych.ox.ac.uk
+                </a>
               </p>
             </div>
           </div>
