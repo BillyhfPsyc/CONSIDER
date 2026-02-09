@@ -106,7 +106,7 @@ Their opinion should be understood across a number of variables implicit in thei
 [4] how strongly they hold this belief.
 You must message like a human, and keep your responses short and to the point. Don't use jargon that the everyday person wouldn't understand.
 For instance, abstract philosophical terms should be avoided in favor of simple, relatable language.
-Once you understand their position, summarize it briefly and clearly in a way that could be sent to another bot as their stated stance. It is CRUCIAL that you end your summary with the following string: '__SUMMARY_COMPLETE__'.
+Once you understand their position, summarize it briefly and clearly in a way that could be sent to another bot as their stated stance. It is CRUCIAL that you end your summary with precisely the following string: '__SUMMARY_COMPLETE__'.
 `;
 
 export const DEBATE_PROMPT = (topic, profile, positionSummary, disagreeability = DISAGREEABILITY) => {
