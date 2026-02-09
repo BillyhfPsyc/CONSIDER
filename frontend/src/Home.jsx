@@ -341,9 +341,7 @@ export default function Home() {
                 Psychology
               </h3>
               <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-                We incorporate cognitive and social psychology to reduce
-                defensiveness, support reflection, and protect wellbeing during
-                difficult conversations.
+                We draw on psychological insights to create environments where people feel safe exploring different viewpoints and reflecting on their own beliefs without defensiveness.
               </p>
             </div>
 

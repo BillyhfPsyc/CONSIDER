@@ -51,7 +51,7 @@ const RVDs = [
   {
     label: "Transgender Issues",
     description:
-      "Should there be trans bathrooms? Is it a mental illness? Should trans youth have access to gender-affirming surgeries?",
+      "Should there be trans bathrooms? Should trans youth have access to gender-affirming surgeries?",
     tag: "Human Rights",
   },
   {
