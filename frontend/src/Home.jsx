@@ -1,5 +1,5 @@
 // src/Home.jsx
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Sparkles,
@@ -15,11 +15,60 @@ import {
 } from "lucide-react";
 
 export default function Home() {
+  const [activeStage, setActiveStage] = useState(1);
+
+  const stages = [
+    {
+      id: 1,
+      label: "Clarification",
+      icon: Search,
+      iconBg: "bg-cyan-500/20",
+      iconColor: "text-cyan-300",
+      circleBg: "bg-cyan-500",
+      circleDull: "bg-slate-700",
+      buttonBg: "bg-slate-950/80",
+      title: "Clarify your position",
+      description:
+        "You begin by articulating your beliefs on a complex issue. The AI helps you refine and structure your arguments, highlighting core values and assumptions.",
+      cardBg: "border-cyan-500/30",
+      cardGlow: "shadow-cyan-900/30",
+    },
+    {
+      id: 2,
+      label: "Conversation",
+      icon: MessageCircle,
+      iconBg: "bg-blue-500/20",
+      iconColor: "text-blue-300",
+      circleBg: "bg-blue-500",
+      circleDull: "bg-slate-700",
+      buttonBg: "bg-slate-950/80",
+      title: "Engage with opposition",
+      description:
+        "The system generates principled counterarguments tailored to your view, letting you choose a 'disagreement level' match your own goals for the conversation.",
+      cardBg: "border-blue-500/30",
+      cardGlow: "shadow-blue-900/30",
+    },
+    {
+      id: 3,
+      label: "Contemplation",
+      icon: BarChart3,
+      iconBg: "bg-purple-500/20",
+      iconColor: "text-purple-300",
+      circleBg: "bg-purple-500",
+      circleDull: "bg-slate-700",
+      buttonBg: "bg-slate-950/80",
+      title: "Reflect and visualise",
+      description:
+        "Afterwards, you see a structured summary of your arguments, values, and divergences, and can compare your pattern with broader trends.",
+      cardBg: "border-purple-500/30",
+      cardGlow: "shadow-purple-900/30",
+    },
+  ];
+
   return (
     <div className="relative">
       {/* HERO */}
       <section className="relative min-h-screen flex items-start justify-center px-6 pt-10 md:pt-14 overflow-hidden">
-
         {/* Main hero content */}
         <div className="max-w-5xl mx-auto text-center relative z-10">
           {/* Big image */}
@@ -31,7 +80,6 @@ export default function Home() {
             </h1>
           </div>
 
-
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-5 leading-tight tracking-tight">
             Navigate{" "}
             <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
@@ -40,7 +88,6 @@ export default function Home() {
             <br />
             with Thoughtful Dialogue
           </h1>
-
 
           <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
             CONSIDER is an AI platform for structured reflection on complex,
@@ -93,7 +140,7 @@ export default function Home() {
                 those of others.
               </p>
               <p>
-                The core problem isn’t disagreement itself, but the lack of
+                The core problem isn't disagreement itself, but the lack of
                 structured, reflective engagement with polarised topics.
               </p>
             </div>
@@ -127,7 +174,7 @@ export default function Home() {
                 </div>
                 <p className="text-sm md:text-base text-slate-200">
                   Many people avoid difficult conversations entirely because
-                  they worry about conflict, social fallout, or simply don’t
+                  they worry about conflict, social fallout, or simply don't
                   know where to start.
                 </p>
               </div>
@@ -168,85 +215,91 @@ export default function Home() {
             <div className="w-16 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full mx-auto mt-4" />
           </div>
 
-          {/* Stage bar */}
+          {/* Stage bar - Clickable */}
           <div className="flex items-center justify-center gap-4 mb-14 max-w-xl mx-auto">
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-cyan-500 text-white font-semibold flex items-center justify-center">
-                1
-              </div>
-              <span className="mt-2 text-sm font-medium text-slate-200">
-                Clarification
-              </span>
-            </div>
-            <div className="h-[2px] flex-1 bg-slate-700" />
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-slate-700 text-slate-200 font-semibold flex items-center justify-center">
-                2
-              </div>
-              <span className="mt-2 text-sm font-medium text-slate-300">
-                Conversation
-              </span>
-            </div>
-            <div className="h-[2px] flex-1 bg-slate-700" />
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-slate-700 text-slate-200 font-semibold flex items-center justify-center">
-                3
-              </div>
-              <span className="mt-2 text-sm font-medium text-slate-300">
-                Contemplation
-              </span>
-            </div>
+            {stages.map((stage, index) => (
+              <React.Fragment key={stage.id}>
+                <button
+                  onClick={() => setActiveStage(stage.id)}
+                  className={`flex flex-col items-center cursor-pointer transition-all duration-200 hover:scale-110 ${stage.buttonBg}`}
+                >
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 font-semibold text-white ${
+                      activeStage === stage.id
+                        ? `${stage.circleBg} shadow-lg ${
+                            stage.id === 1
+                              ? "shadow-cyan-500/50"
+                              : stage.id === 2
+                              ? "shadow-blue-500/50"
+                              : "shadow-purple-500/50"
+                          }`
+                        : "bg-slate-700"
+                    }`}
+                  >
+                    {stage.id}
+                  </div>
+                  <span
+                    className={`mt-2 text-sm font-medium transition-colors duration-200 ${
+                      activeStage === stage.id
+                        ? "text-white"
+                        : "text-slate-300"
+                    }`}
+                  >
+                    {stage.label}
+                  </span>
+                </button>
+
+                {index < stages.length - 1 && (
+                  <div className="h-[2px] flex-1 bg-slate-700" />
+                )}
+              </React.Fragment>
+            ))}
           </div>
 
-          {/* Cards */}
+          {/* Cards - Show only active stage */}
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="rounded-2xl bg-white/5 border border-white/10 p-6 text-center shadow-lg shadow-black/30">
-              <div className="mb-3 flex justify-center">
-                <div className="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center">
-                  <Search className="w-5 h-5 text-cyan-300" />
+            {stages.map((stage) => {
+              const IconComponent = stage.icon;
+              return (
+                <div
+                  key={stage.id}
+                  className={`rounded-2xl bg-white/5 border p-6 text-center shadow-lg transition-all duration-300 ${
+                    activeStage === stage.id
+                      ? `${stage.cardBg} ${stage.cardGlow} scale-105`
+                      : "border-white/10 shadow-black/30 opacity-40"
+                  }`}
+                >
+                  {stage.id === 3 && (
+                    <div className="inline-block mb-3 px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/50">
+                      <span className="text-xs font-semibold text-yellow-300">Coming Soon</span>
+                    </div>
+                  )}
+                  <div className="mb-3 flex justify-center">
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
+                        activeStage === stage.id
+                          ? stage.iconBg
+                          : "bg-slate-700/30"
+                      }`}
+                    >
+                      <IconComponent
+                        className={`w-5 h-5 transition-all duration-200 ${
+                          activeStage === stage.id
+                            ? stage.iconColor
+                            : "text-slate-500"
+                        }`}
+                      />
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-white mb-2">
+                    {stage.title}
+                  </h3>
+                  <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+                    {stage.description}
+                  </p>
                 </div>
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                Clarify your position
-              </h3>
-              <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-                You begin by articulating your beliefs on a complex issue. The
-                AI helps you refine and structure your arguments, highlighting
-                core values and assumptions.
-              </p>
-            </div>
-
-            <div className="rounded-2xl bg-white/5 border border-white/10 p-6 text-center shadow-lg shadow-black/30">
-              <div className="mb-3 flex justify-center">
-                <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <MessageCircle className="w-5 h-5 text-blue-300" />
-                </div>
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                Engage with opposition
-              </h3>
-              <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-                The system generates principled counterarguments tailored to
-                your view, letting you choose tone and depth to match your own
-                goals for the conversation.
-              </p>
-            </div>
-
-            <div className="rounded-2xl bg-white/5 border border-white/10 p-6 text-center shadow-lg shadow-black/30">
-              <div className="mb-3 flex justify-center">
-                <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
-                  <BarChart3 className="w-5 h-5 text-purple-300" />
-                </div>
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                Reflect and visualise
-              </h3>
-              <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-                Afterwards, you see a structured summary of your arguments,
-                values, and divergences, and can compare your pattern with
-                broader trends.
-              </p>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -274,7 +327,7 @@ export default function Home() {
                 Philosophy
               </h3>
               <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-                We draw on Mill’s trident and other normative frameworks to
+                We draw on Mill's trident and other normative frameworks to
                 structure disagreement in ways that respect both truth and
                 pluralism.
               </p>
