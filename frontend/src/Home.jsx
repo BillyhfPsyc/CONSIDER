@@ -29,7 +29,7 @@ export default function Home() {
       buttonBg: "bg-slate-950/80",
       title: "Clarify your position",
       description:
-        "You begin by articulating your beliefs on a complex issue. The AI helps you refine and structure your arguments, highlighting core values and assumptions.",
+        "You begin by articulating your beliefs on a complex issue. CONSIDER helps you refine and structure your arguments, highlighting core values and assumptions.",
       cardBg: "border-cyan-500/30",
       cardGlow: "shadow-cyan-900/30",
     },
