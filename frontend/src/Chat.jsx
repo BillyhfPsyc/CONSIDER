@@ -20,7 +20,7 @@ function Chat() {
   const [conversationId, setConversationId] = useState("");
   const [messages, setMessages] = useState([]);
   const [profile, setProfile] = useState("");
-  const [timeLeft, setTimeLeft] = useState(900); // total time for discussion
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
   const [isLoading, setIsLoading] = useState(false);
   const [showTimeWarning, setShowTimeWarning] = useState(false);
   const hasWarned = useRef(false);
@@ -37,11 +37,11 @@ function Chat() {
     scrollToBottom();
   }, [messages, isLoading]);
 
-  // Hard redirect to results after 5 minutes
+  // Hard redirect to results after 10 minutes
   useEffect(() => {
     const timeout = setTimeout(() => {
       navigate("/results");
-    }, 15 * 60 * 1000);
+    }, 10 * 60 * 1000);
 
     return () => clearTimeout(timeout);
   }, [navigate]);
