@@ -75,7 +75,7 @@ router.post("/chat", async (req, res) => {
       .collection("Interactions")
       .find({ conversationId })
       .sort({ timestamp: 1 })
-      .limit(40) // limit to last 40 messages to control token usage
+      .limit(60) // limit to last 40 messages to control token usage
       .toArray();
 
     // 🧠 Prepare prompt
