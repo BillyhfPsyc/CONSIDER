@@ -7,7 +7,8 @@ function Results() {
       <div className="results-card" role="region" aria-labelledby="results-title">
         <h2 id="results-title" className="results-title">Conversation Summary</h2>
         <p className="results-text">
-            A detailed summary of the discussion and accompanying visualisations will appear here.
+            This section has not been created yet, as this is an early prototype.
+            However, in the near future, a detailed summary of the discussion and accompanying visualisations will appear here. 
         </p>
 
         {/* Placeholder skeleton lines representing multiple visualisations */}
