@@ -109,8 +109,8 @@ function CurrentPosition() {
 
   return (
     <>
-      <div className="px-6 py-10 md:py-16">
-        <div className="max-w-4xl mx-auto space-y-8">
+      <div className="flex flex-col min-h-screen px-6 py-10 md:py-16">
+        <div className="max-w-4xl mx-auto w-full space-y-8 flex flex-col flex-1">
           {/* Header */}
           <div className="text-center space-y-4 max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
@@ -128,10 +128,10 @@ function CurrentPosition() {
             </p>
           </div>
 
-          {/* Chat box */}
+          {/* Chat box - grows to fill available space */}
           <div
             ref={chatBoxRef}
-            className="mt-2 h-80 md:h-96 overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/60 p-4 md:p-5 shadow-xl shadow-black/40 space-y-3"
+            className="mt-2 flex-1 min-h-80 md:min-h-96 overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/60 p-4 md:p-5 shadow-xl shadow-black/40 space-y-3"
           >
             <div className={summaryReady && !isUpdatingStance ? "opacity-50" : "opacity-100"}>
               {messages.slice(0, -1).map((msg, index) => {
