@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { sendDebateChat, createProfile } from "./api";
+import Layout from "./Layout";
 import ChatInput from "./components/chat/ChatInput.jsx";
 import MessageBubble from "./components/chat/MessageBubble.jsx";
 
@@ -167,144 +168,135 @@ function Chat() {
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = (timeLeft % 60).toString().padStart(2, "0");
+  const timerDisplay = `Time remaining: ${minutes}:${seconds}`;
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-8rem)]">
-      {/* Fixed Timer */}
-      <div className="fixed top-[7.5rem] left-0 w-full bg-slate-900 border-b border-cyan-400/40 px-6 py-3 z-50">
-        <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <h1 className="text-lg md:text-xl font-bold text-white">
-            Topic: <span className="text-cyan-300">{topic}</span>
-          </h1>
-          <p className="text-sm md:text-base font-semibold text-slate-100">
-            ⏳ Time remaining: <span className="font-mono">{minutes}:{seconds}</span>
-          </p>
-        </div>
-      </div>
-
-      {/* One-minute warning popup */}
-      <AnimatePresence>
-        {showTimeWarning && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.5 }}
-            className="fixed inset-0 flex items-center justify-center bg-black/70 z-50"
-          >
-            <div className="bg-slate-900 border border-cyan-400/40 px-8 py-6 rounded-2xl shadow-xl text-white text-center">
-              <h2 className="text-3xl font-bold mb-4">⏰ Time is running out!</h2>
-              <p className="text-lg">
-                Less than one minute remaining — wrap up your final points!
-              </p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Messages area */}
-      <div className="flex-1 overflow-y-auto mt-[7.5rem]"> {/* Adjust for fixed timer */}
-        <div className="max-w-4xl mx-auto px-6 py-8 min-h-[60vh]">
-          <div className="rounded-3xl border border-white/10 bg-slate-900/40 shadow-xl shadow-black/30 p-6 md:p-8 flex flex-col gap-6">
-            {/* Header */}
-            <div className="text-center mb-2 space-y-2">
-              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
-                Discussion
-              </h1>
-              <p className="text-sm md:text-base text-slate-200 max-w-2xl mx-auto">
-                You will now engage in a discussion with an AI that has an opposing opinion to you.
-                Freely discuss the topic as you would with another person.
-              </p>
-            </div>
-
-            {/* Messages */}
-            {messages.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center py-12 md:py-16 flex-1 flex flex-col items-center justify-center"
-              >
-                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/20 flex items-center justify-center mx-auto mb-6">
-                  <Sparkles className="w-10 h-10 text-cyan-400" />
-                </div>
-
-                <h2 className="text-2xl font-semibold text-white mb-3">
-                  Starting the discussion...
-                </h2>
-
-                <p className="text-slate-400 max-w-md mx-auto mb-2">
-                  The AI will begin in a moment.
+    <Layout timerDisplay={timerDisplay}>
+      <div className="flex flex-col min-h-[calc(100vh-8rem)]">
+        {/* One-minute warning popup */}
+        <AnimatePresence>
+          {showTimeWarning && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.5 }}
+              className="fixed inset-0 flex items-center justify-center bg-black/70 z-50"
+            >
+              <div className="bg-slate-900 border border-cyan-400/40 px-8 py-6 rounded-2xl shadow-xl text-white text-center">
+                <h2 className="text-3xl font-bold mb-4">⏰ Time is running out!</h2>
+                <p className="text-lg">
+                  Less than one minute remaining — wrap up your final points!
                 </p>
-              </motion.div>
-            ) : (
-              <div className="space-y-6 flex-1 flex flex-col">
-                <AnimatePresence mode="popLayout">
-                  {messages.map((m, i) => (
-                    <MessageBubble
-                      key={`${m.sender}-${i}`}
-                      message={m.text}
-                      isUser={m.sender === "user"}
-                    />
-                  ))}
-                </AnimatePresence>
-
-                {isLoading && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex gap-3 max-w-3xl"
-                  >
-                    <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
-                      <Sparkles className="w-4 h-4 text-white" />
-                    </div>
-                    <div className="px-5 py-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10">
-                      <div className="flex gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" />
-                        <span
-                          className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce"
-                          style={{ animationDelay: "150ms" }}
-                        />
-                        <span
-                          className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce"
-                          style={{ animationDelay: "300ms" }}
-                        />
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-
-                <div ref={messagesEndRef} />
               </div>
-            )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Messages area */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-4xl mx-auto px-6 py-8 min-h-[60vh]">
+            <div className="rounded-3xl border border-white/10 bg-slate-900/40 shadow-xl shadow-black/30 p-6 md:p-8 flex flex-col gap-6">
+              {/* Header */}
+              <div className="text-center mb-2 space-y-2">
+                <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
+                  Discussion
+                </h1>
+                <p className="text-sm md:text-base text-slate-200 max-w-2xl mx-auto">
+                  You will now engage in a discussion with an AI that has an opposing opinion to you.
+                  Freely discuss the topic as you would with another person.
+                </p>
+              </div>
+
+              {/* Messages */}
+              {messages.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-center py-12 md:py-16 flex-1 flex flex-col items-center justify-center"
+                >
+                  <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/20 flex items-center justify-center mx-auto mb-6">
+                    <Sparkles className="w-10 h-10 text-cyan-400" />
+                  </div>
+
+                  <h2 className="text-2xl font-semibold text-white mb-3">
+                    Starting the discussion...
+                  </h2>
+
+                  <p className="text-slate-400 max-w-md mx-auto mb-2">
+                    The AI will begin in a moment.
+                  </p>
+                </motion.div>
+              ) : (
+                <div className="space-y-6 flex-1 flex flex-col">
+                  <AnimatePresence mode="popLayout">
+                    {messages.map((m, i) => (
+                      <MessageBubble
+                        key={`${m.sender}-${i}`}
+                        message={m.text}
+                        isUser={m.sender === "user"}
+                      />
+                    ))}
+                  </AnimatePresence>
+
+                  {isLoading && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex gap-3 max-w-3xl"
+                    >
+                      <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
+                        <Sparkles className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="px-5 py-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10">
+                        <div className="flex gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" />
+                          <span
+                            className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce"
+                            style={{ animationDelay: "150ms" }}
+                          />
+                          <span
+                            className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce"
+                            style={{ animationDelay: "300ms" }}
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  <div ref={messagesEndRef} />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Input + end button */}
+        <div className="border-t border-white/5">
+          <div className="max-w-4xl mx-auto px-6 py-4 space-y-3">
+            <ChatInput onSend={handleSendMessage} isLoading={isLoading} />
+
+            <div className="flex justify-center gap-3">
+              <button
+                type="button"
+                onClick={handleChooseAnotherTopic}
+                className="inline-flex items-center justify-center rounded-full bg-white/5 px-4 py-2 text-xs md:text-sm font-semibold text-slate-200 border border-white/15 hover:bg-white/10 hover:border-white/30 transition-colors"
+              >
+                Choose another topic
+              </button>
+
+              <button
+                type="button"
+                onClick={handleEndConversation}
+                className="inline-flex items-center justify-center rounded-full bg-white/5 px-4 py-2 text-xs md:text-sm font-semibold text-slate-200 border border-white/15 hover:bg-white/10 hover:border-cyan-400/60 transition-colors"
+              >
+                End conversation and see results
+              </button> 
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Input + end button */}
-      <div className="border-t border-white/5">
-        <div className="max-w-4xl mx-auto px-6 py-4 space-y-3">
-          <ChatInput onSend={handleSendMessage} isLoading={isLoading} />
-
-          <div className="flex justify-center gap-3">
-            <button
-              type="button"
-              onClick={handleChooseAnotherTopic}
-              className="inline-flex items-center justify-center rounded-full bg-white/5 px-4 py-2 text-xs md:text-sm font-semibold text-slate-200 border border-white/15 hover:bg-white/10 hover:border-white/30 transition-colors"
-            >
-              Choose another topic
-            </button>
-
-            <button
-              type="button"
-              onClick={handleEndConversation}
-              className="inline-flex items-center justify-center rounded-full bg-white/5 px-4 py-2 text-xs md:text-sm font-semibold text-slate-200 border border-white/15 hover:bg-white/10 hover:border-cyan-400/60 transition-colors"
-            >
-              End conversation and see results
-            </button> 
-          </div>
-        </div>
-      </div>
-    </div>
+    </Layout>
   );
 }
 
