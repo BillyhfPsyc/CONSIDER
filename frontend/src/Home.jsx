@@ -371,7 +371,7 @@ export default function Home() {
             <h3 className="text-lg font-semibold text-white mb-4">Information & Privacy</h3>
             <div className="space-y-4 text-sm text-slate-300 leading-relaxed">
               <p>
-                This is an early prototype exploring how generative AI might support structured reflection and discussion around contested or morally significant issues. The system currently uses the Llama 4 large language model and has been prompt-engineered for this specific purpose. The model's knowledge cutoff is approximately August 2024, so it may not reflect more recent events or developments.
+                This is an early prototype exploring how generative AI might support structured reflection and discussion around contested or morally significant issues. The system currently uses the Llama 3 large language model and has been prompt-engineered for this specific purpose. The model's knowledge cutoff is approximately August 2024, so it may not reflect more recent events or developments.
               </p>
               <p>
                 Conversations with the AI may be logged for research and development purposes. All logs are fully anonymised, are not linked to identifying information, and will never be shared or attributed to individual users.

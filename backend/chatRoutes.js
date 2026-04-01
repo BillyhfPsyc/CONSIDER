@@ -16,7 +16,8 @@ const PROVIDER = process.env.LLM_PROVIDER || "openai";
 
 // Default models for each provider
 const OPENAI_MODEL = "gpt-4o-mini"; // adjust if you like
-const TOGETHER_MODEL = "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8";
+const TOGETHER_MODEL = "meta-llama/Llama-3.3-70B-Instruct-Turbo";
+
 
 /**
  * POST /chat
