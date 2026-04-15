@@ -11,6 +11,7 @@ const express = require("express");
 const cors = require("cors");
 
 const chatRoutes = require("./chatRoutes");
+const analysisRoutes = require("./analysisRoutes");
 
 
 const app = express();
@@ -38,6 +39,7 @@ app.get("/health", (req, res) => res.json({ ok: true }));
 
 // Routes
 app.use(chatRoutes);
+app.use(analysisRoutes);
 
 // Connect to DB first, then start server
 (async () => {

@@ -41,7 +41,13 @@ export function sendPositionChat(conversationId, message, topic) {
     });
   }
 
-
+  export function analyzeConversation(conversationId, topic, summary) {
+    return axios.post(`${URL}/analyze-conversation`, {
+      conversationId,
+      topic,
+      summary,
+    });
+  }
   
   
 // export async function getPosts() {
