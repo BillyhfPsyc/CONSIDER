@@ -41,11 +41,19 @@ function Chat() {
   // Hard redirect to results after 10 minutes
   useEffect(() => {
     const timeout = setTimeout(() => {
-      navigate("/results");
+      navigate("/results", {
+        state: {
+          conversationId,
+          topic,
+          summary,
+        },
+      });
     }, 10 * 60 * 1000);
-
+  
     return () => clearTimeout(timeout);
-  }, [navigate]);
+  }, [navigate, conversationId, topic, summary]);
+
+  
 
   // Countdown timer
   useEffect(() => {
@@ -163,7 +171,13 @@ function Chat() {
   };
 
   const handleEndConversation = () => {
-    navigate("/results");
+    navigate("/results", {
+      state: {
+        conversationId,
+        topic,
+        summary,
+      },
+    });
   };
 
   const minutes = Math.floor(timeLeft / 60);

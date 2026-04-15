@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require("express"); 
 const router = express.Router();
 const database = require("./connect.js");
 const { buildAnalysisPrompt } = require("./analysisPrompt");
@@ -23,12 +23,26 @@ function formatTranscript(history) {
 }
 
 function safeParseAnalysis(text) {
-  try {
-    return JSON.parse(text);
-  } catch (err) {
-    return null;
+    try {
+      // Try direct parse first
+      return JSON.parse(text);
+    } catch (err) {
+      try {
+        // Attempt to extract JSON block
+        const start = text.indexOf("{");
+        const end = text.lastIndexOf("}");
+  
+        if (start !== -1 && end !== -1) {
+          const jsonString = text.slice(start, end + 1);
+          return JSON.parse(jsonString);
+        }
+  
+        return null;
+      } catch (err2) {
+        return null;
+      }
+    }
   }
-}
 
 router.post("/analyze-conversation", async (req, res) => {
   try {
@@ -87,10 +101,14 @@ router.post("/analyze-conversation", async (req, res) => {
       });
       analysisText = completion.choices[0].message.content;
     }
+    
+    console.log("🤖 ANALYSIS LLM RESPONSE:\n", analysisText);
 
     const analysis = safeParseAnalysis(analysisText);
 
     if (!analysis) {
+        console.log("❌ RAW ANALYSIS TEXT:\n", analysisText);
+
       return res.status(500).json({
         error: "Analysis model returned invalid JSON.",
         raw: analysisText,
