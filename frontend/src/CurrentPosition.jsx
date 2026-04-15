@@ -1,6 +1,7 @@
 // src/CurrentPosition.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Mic, MicOff } from "lucide-react";
 import { sendPositionChat } from "./api";
 
 function CurrentPosition() {
@@ -20,9 +21,14 @@ function CurrentPosition() {
   const [input, setInput] = useState("");
   const [summaryReady, setSummaryReady] = useState(false);
   const [isUpdatingStance, setIsUpdatingStance] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
 
   const chatBoxRef = useRef(null);
   const proceedRef = useRef(null);
+  const recognitionRef = useRef(null);
+  const finalTranscriptRef = useRef("");
+  const ignoreSpeechResultsRef = useRef(false);
 
   // Keep chat scrolled to bottom on new messages
   useEffect(() => {
@@ -41,9 +47,79 @@ function CurrentPosition() {
     }
   }, [summaryReady]);
 
+  // Speech recognition setup
+  useEffect(() => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      setSpeechSupported(false);
+      return;
+    }
+
+    setSpeechSupported(true);
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "en-GB";
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onresult = (event) => {
+      if (ignoreSpeechResultsRef.current) return;
+    
+      let interimTranscript = "";
+      let finalTranscript = finalTranscriptRef.current;
+    
+      for (let i = event.resultIndex; i < event.results.length; i += 1) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += `${transcript} `;
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+    
+      finalTranscriptRef.current = finalTranscript;
+      const combined = `${finalTranscript}${interimTranscript}`.trim();
+      setInput(combined);
+    };
+
+    recognition.onerror = () => {
+      setIsListening(false);
+      ignoreSpeechResultsRef.current = false;
+
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+      ignoreSpeechResultsRef.current = false;
+    };
+
+    recognitionRef.current = recognition;
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.onstart = null;
+        recognitionRef.current.onresult = null;
+        recognitionRef.current.onerror = null;
+        recognitionRef.current.onend = null;
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
+
   const handleSend = async () => {
     if (!input.trim()) return;
     const userText = input;
+
+    if (isListening && recognitionRef.current) {
+      ignoreSpeechResultsRef.current = true;
+      recognitionRef.current.stop();
+    }
 
     setMessages((prev) => [
       ...prev,
@@ -51,6 +127,7 @@ function CurrentPosition() {
       { sender: "bot", text: "Typing..." },
     ]);
     setInput("");
+    finalTranscriptRef.current = "";
 
     try {
       const res = await sendPositionChat(conversationId, userText, topicLabel);
@@ -61,10 +138,11 @@ function CurrentPosition() {
         { sender: "bot", text: reply },
       ]);
 
-      if (reply.includes("__SUMMARY_COMPLETE__") || 
-          reply.includes("SUMMARY_COMPLETE__") || 
-          reply.includes("__SUMMARY_COMPLETE") || 
-          reply.includes("SUMMARY_COMPLETE") 
+      if (
+        reply.includes("__SUMMARY_COMPLETE__") ||
+        reply.includes("SUMMARY_COMPLETE__") ||
+        reply.includes("__SUMMARY_COMPLETE") ||
+        reply.includes("SUMMARY_COMPLETE")
       ) {
         setSummaryReady(true);
         setIsUpdatingStance(false);
@@ -85,8 +163,26 @@ function CurrentPosition() {
     }
   };
 
+  const toggleListening = () => {
+    if (
+      !speechSupported ||
+      (summaryReady && !isUpdatingStance) ||
+      !recognitionRef.current
+    ) {
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+      return;
+    }
+
+    finalTranscriptRef.current = input ? `${input.trim()} ` : "";
+    ignoreSpeechResultsRef.current = false;
+    recognitionRef.current.start();
+  };
+
   const handleProceed = () => {
-    // Find the LAST message with __SUMMARY_COMPLETE__ (most recent summary)
     let summaryMessage = "";
     for (let i = messages.length - 1; i >= 0; i--) {
       if (messages[i].text.includes("__SUMMARY_COMPLETE__")) {
@@ -111,7 +207,6 @@ function CurrentPosition() {
     <>
       <div className="flex flex-col min-h-screen px-6 py-10 md:py-16">
         <div className="max-w-4xl mx-auto w-full space-y-8 flex flex-col flex-1">
-          {/* Header */}
           <div className="text-center space-y-4 max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
               SUMMARY PHASE
@@ -128,12 +223,15 @@ function CurrentPosition() {
             </p>
           </div>
 
-          {/* Chat box - grows to fill available space */}
           <div
             ref={chatBoxRef}
             className="mt-2 flex-1 min-h-80 md:min-h-96 overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/60 p-4 md:p-5 shadow-xl shadow-black/40 space-y-3"
           >
-            <div className={summaryReady && !isUpdatingStance ? "opacity-50" : "opacity-100"}>
+            <div
+              className={
+                summaryReady && !isUpdatingStance ? "opacity-50" : "opacity-100"
+              }
+            >
               {messages.slice(0, -1).map((msg, index) => {
                 const isBot = msg.sender === "bot";
                 const cleanText = isBot
@@ -173,7 +271,6 @@ function CurrentPosition() {
               })}
             </div>
 
-            {/* Latest message (summary) - always visible */}
             {messages.length > 0 && (
               <div className="flex gap-3">
                 <div className="flex-shrink-0">
@@ -195,26 +292,56 @@ function CurrentPosition() {
             )}
           </div>
 
-          {/* Input area */}
           <div
             className={`flex items-end gap-3 pt-2 transition-opacity ${
-              summaryReady && !isUpdatingStance ? "opacity-50 pointer-events-none" : "opacity-100"
+              summaryReady && !isUpdatingStance
+                ? "opacity-50 pointer-events-none"
+                : "opacity-100"
             }`}
           >
             <textarea
               className="flex-1 min-h-[3rem] max-h-40 rounded-2xl border border-white/15 bg-slate-900/70 px-3 py-2 text-sm md:text-base text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent resize-none"
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => {
+                setInput(e.target.value);
+                finalTranscriptRef.current = e.target.value;
+              }}
               onKeyDown={handleKeyDown}
-              placeholder="Type your response here..."
+              placeholder={
+                speechSupported
+                  ? "Type your response here or use the mic..."
+                  : "Type your response here..."
+              }
               rows={1}
               disabled={summaryReady && !isUpdatingStance}
             />
+
+            {speechSupported && (
+              <button
+                type="button"
+                onClick={toggleListening}
+                disabled={summaryReady && !isUpdatingStance}
+                className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl border transition-all duration-300 ${
+                  isListening
+                    ? "bg-red-500/20 border-red-400/50 text-red-300"
+                    : "bg-slate-800/80 border-white/15 text-slate-100 hover:bg-slate-700/80"
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+                aria-label={isListening ? "Stop voice input" : "Start voice input"}
+                title={isListening ? "Stop voice input" : "Start voice input"}
+              >
+                {isListening ? (
+                  <MicOff className="w-6 h-6" />
+                ) : (
+                  <Mic className="w-6 h-6" />
+                )}
+              </button>
+            )}
+
             <button
               type="button"
               onClick={handleSend}
               disabled={summaryReady && !isUpdatingStance}
-              className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 px-4 py-2 text-sm md:text-base font-semibold text-white shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-transform transition-shadow duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex h-14 items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 px-5 text-sm md:text-base font-semibold text-white shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-transform transition-shadow duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Send
             </button>
@@ -222,7 +349,6 @@ function CurrentPosition() {
         </div>
       </div>
 
-      {/* Proceed and Update buttons */}
       {summaryReady && (
         <div className="px-6 pb-12" ref={proceedRef}>
           <div className="max-w-4xl mx-auto flex justify-center gap-4">
