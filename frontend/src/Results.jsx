@@ -29,13 +29,13 @@ function ScoreBar({ label, score, explanation }) {
 function Tooltip({ text }) {
   const [visible, setVisible] = useState(false);
   return (
-    <span className="relative inline-block ml-1.5 align-middle">
+    <span 
+      className="relative inline-block ml-1.5 align-middle"
+      onMouseEnter={() => setVisible(true)}
+      onMouseLeave={() => setVisible(false)}
+    >
       <button
         className="text-slate-500 hover:text-slate-300 text-xs leading-none focus:outline-none"
-        onMouseEnter={() => setVisible(true)}
-        onMouseLeave={() => setVisible(false)}
-        onFocus={() => setVisible(true)}
-        onBlur={() => setVisible(false)}
         aria-label="More information"
       >
         ⓘ
@@ -156,9 +156,9 @@ function Results() {
           <p className="text-slate-400">{topic}</p>
         </div>
 
-        {/* 🧠 PROFILES */}
+        {/* PROFILES */}
         <section className="space-y-4">
-          <h3 className="text-xl font-semibold text-white">🧠 Perspectives</h3>
+          <h3 className="text-xl font-semibold text-white">Value Profiles</h3>
           <div className="grid md:grid-cols-2 gap-6">
             {[
               { profile: analysis.userProfile, colour: "cyan", label: "You" },
@@ -170,63 +170,60 @@ function Results() {
               >
                 <p className={`text-${colour}-300 text-sm`}>{label}</p>
                 <p className="font-bold text-white text-lg">{profile.label}</p>
-                <p className="text-slate-300 text-sm">{profile.summary}</p>
+
+                {profile.coreValues?.length > 0 && (
+                  <ul className="space-y-1">
+                    {profile.coreValues.map((v, i) => (
+                      <li key={i} className={`text-base text-${colour}-300 flex items-center gap-2`}>
+                        <span className={`w-1 h-1 rounded-full bg-${colour}-400 flex-shrink-0`} />
+                        {v}
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 {profile.reasoningStyle && (
                   <p className="text-xs text-slate-400 italic">{profile.reasoningStyle}</p>
-                )}
-                {profile.coreValues?.length > 0 && (
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {profile.coreValues.map((v, i) => (
-                      <span
-                        key={i}
-                        className={`text-xs px-2 py-1 rounded-full bg-${colour}-500/10 text-${colour}-300 border border-${colour}-400/20`}
-                      >
-                        {v}
-                      </span>
-                    ))}
-                  </div>
                 )}
               </div>
             ))}
           </div>
         </section>
 
-        {/* 🔍 NATURE OF THE DISAGREEMENT */}
+
+        {/* NATURE OF THE DISAGREEMENT */}
         {analysis.disagreementType && (
-          <section className="space-y-3">
-            <h3 className="text-xl font-semibold text-white">🔍 Nature of the Disagreement</h3>
-            <div className="bg-slate-800/50 p-5 rounded-2xl border border-white/10 space-y-2">
-              <div className="flex items-center gap-1">
-                <p className="font-semibold text-white">
-                  {DISAGREEMENT_TYPE_LABELS[analysis.disagreementType.classification] ?? analysis.disagreementType.classification}
-                </p>
-                <Tooltip text={DISAGREEMENT_TYPE_TOOLTIPS[analysis.disagreementType.classification] ?? ""} />
-              </div>
-              <p className="text-slate-300 text-sm">{analysis.disagreementType.explanation}</p>
+          <section className="space-y-2">
+            <h3 className="text-xl font-semibold text-white">Nature of the Disagreement</h3>
+            <div className="flex items-center gap-1">
+              <p className="font-semibold text-white">
+                {DISAGREEMENT_TYPE_LABELS[analysis.disagreementType.classification] ?? analysis.disagreementType.classification}
+              </p>
+              <Tooltip text={DISAGREEMENT_TYPE_TOOLTIPS[analysis.disagreementType.classification] ?? ""} />
             </div>
+            <p className="text-slate-400 text-sm">{analysis.disagreementType.explanation}</p>
           </section>
         )}
 
         {/* 🎯 ROOT OF THE DISAGREEMENT */}
         {analysis.crux && (
-          <section className="space-y-3">
-            <h3 className="text-xl font-semibold text-white">🎯 Root of the Disagreement</h3>
-            <p className="text-sm text-slate-400">The single claim that underpins everything — if this changed, the whole disagreement would look different.</p>
-            <div className="bg-slate-800/50 p-5 rounded-2xl border border-white/10 space-y-2">
-              <p className="font-semibold text-white">{analysis.crux.claim}</p>
-              <p className="text-xs text-slate-500 uppercase tracking-wide">
-                {analysis.crux.type === "factual" ? "Factual claim" : "Value claim"}
-              </p>
-              <p className="text-slate-300 text-sm">{analysis.crux.explanation}</p>
+          <section className="space-y-2">
+            <h3 className="text-xl font-semibold text-white">Root of the Disagreement</h3>
+            <div className="flex items-start gap-3 pt-1">
+              <p className="text-white font-medium text-base leading-snug">{analysis.crux.claim}</p>
+              <span className="flex-shrink-0 text-xs px-2 py-0.5 rounded-full border border-white/10 text-slate-500 mt-0.5">
+                {analysis.crux.type === "factual" ? "Factual" : "Value"}
+              </span>
             </div>
+            <p className="text-slate-400 text-sm">{analysis.crux.explanation}</p>
           </section>
         )}
+
 
         {/* 🧭 MORAL FOUNDATIONS */}
         {analysis.moralFoundations?.length > 0 && (
           <section className="space-y-4">
             <div className="flex items-center gap-1">
-              <h3 className="text-xl font-semibold text-white">🧭 Moral Foundations</h3>
+              <h3 className="text-xl font-semibold text-white">Moral Foundations</h3>
               <Tooltip text="Based on Moral Foundations Theory (Haidt). Scores how prominently each moral consideration featured in your reasoning, with direct reference to what you said. Scored 0–10." />
             </div>
             <div className="space-y-3">
@@ -246,7 +243,7 @@ function Results() {
         {analysis.epistemicHumility && (
           <section className="space-y-4">
             <div className="flex items-center gap-1">
-              <h3 className="text-xl font-semibold text-white">📏 Epistemic Humility</h3>
+              <h3 className="text-xl font-semibold text-white">Epistemic Humility</h3>
               <Tooltip text="Did you show openness to uncertainty, qualify your claims, or update your thinking during the conversation? Higher scores reflect more openness and responsiveness to counterarguments." />
             </div>
             <ScoreBar
@@ -260,7 +257,7 @@ function Results() {
         {/* 🌐 WHERE YOU STAND */}
         {analysis.overtonPosition && (
           <section className="space-y-3">
-            <h3 className="text-xl font-semibold text-white">🌐 Where You Stand</h3>
+            <h3 className="text-xl font-semibold text-white">Where You Stand</h3>
             <div className="bg-slate-800/50 p-5 rounded-2xl border border-white/10">
               <p className="text-slate-300 text-sm">{analysis.overtonPosition.description}</p>
             </div>
@@ -269,7 +266,7 @@ function Results() {
 
         {/* ⚠️ KEY DISAGREEMENTS */}
         <section className="space-y-4">
-          <h3 className="text-xl font-semibold text-red-300">⚠️ Key Disagreements</h3>
+          <h3 className="text-xl font-semibold text-red-300">Key Disagreements</h3>
           {analysis.keyDisagreements.length === 0 ? (
             <p className="text-slate-400 text-sm italic">No clear disagreements identified.</p>
           ) : (
@@ -286,7 +283,7 @@ function Results() {
 
         {/* 🤝 KEY AGREEMENTS */}
         <section className="space-y-4">
-          <h3 className="text-xl font-semibold text-green-300">🤝 Key Agreements</h3>
+          <h3 className="text-xl font-semibold text-green-300">Key Agreements</h3>
           {analysis.keyAgreements.length === 0 ? (
             <p className="text-slate-400 text-sm italic">No clear agreement between parties.</p>
           ) : (
@@ -304,7 +301,7 @@ function Results() {
         {/* 🌿 POTENTIAL COMMON GROUND */}
         {analysis.potentialAgreements?.length > 0 && (
           <section className="space-y-4">
-            <h3 className="text-xl font-semibold text-amber-300">🌿 Potential Common Ground</h3>
+            <h3 className="text-xl font-semibold text-amber-300">Potential Common Ground</h3>
             <p className="text-sm text-slate-400">
               Points where agreement may be possible, but wasn't directly stated.
             </p>
@@ -321,7 +318,7 @@ function Results() {
 
         {/* 🔄 CONVERSATION DYNAMICS */}
         <section className="space-y-4">
-          <h3 className="text-xl font-semibold text-white">🔄 Conversation Dynamics</h3>
+          <h3 className="text-xl font-semibold text-white">Conversation Dynamics</h3>
           <div className="bg-slate-800/50 p-5 rounded-2xl border border-white/10 space-y-2">
             <p>
               <strong className="text-slate-300">Tone:</strong>{" "}
