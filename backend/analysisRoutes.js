@@ -1,17 +1,22 @@
-const express = require("express"); 
+const express = require("express");
 const router = express.Router();
 const database = require("./connect.js");
-const { buildAnalysisPrompt } = require("./analysisPrompt");
+const {
+  buildPhilosophicalPrompt,
+  buildExtractorPrompt,
+  buildDynamicsPrompt,
+} = require("./analysisPrompt");
 
 const OpenAI = require("openai");
-const Together = require("together-ai");
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
+const openrouter = new OpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
 
-const PROVIDER = process.env.LLM_PROVIDER || "openai";
-const OPENAI_MODEL = "gpt-4o-mini";
-const TOGETHER_MODEL = "meta-llama/Llama-3.3-70B-Instruct-Turbo";
+const PHILOSOPHICAL_MODEL = "anthropic/claude-sonnet-4-5";
+const EXTRACTOR_MODEL = "openai/gpt-4o-mini";
+const DYNAMICS_MODEL = "openai/gpt-4o-mini";
 
 function formatTranscript(history) {
   return history
@@ -23,26 +28,36 @@ function formatTranscript(history) {
 }
 
 function safeParseAnalysis(text) {
+  try {
+    return JSON.parse(text);
+  } catch {
     try {
-      // Try direct parse first
-      return JSON.parse(text);
-    } catch (err) {
-      try {
-        // Attempt to extract JSON block
-        const start = text.indexOf("{");
-        const end = text.lastIndexOf("}");
-  
-        if (start !== -1 && end !== -1) {
-          const jsonString = text.slice(start, end + 1);
-          return JSON.parse(jsonString);
-        }
-  
-        return null;
-      } catch (err2) {
-        return null;
+      const start = text.indexOf("{");
+      const end = text.lastIndexOf("}");
+      if (start !== -1 && end !== -1) {
+        return JSON.parse(text.slice(start, end + 1));
       }
+      return null;
+    } catch {
+      return null;
     }
   }
+}
+
+async function callModel(model, prompt, useJsonFormat = true) {
+  const params = {
+    model,
+    messages: [{ role: "system", content: prompt }],
+    temperature: 0.3,
+  };
+
+  if (useJsonFormat) {
+    params.response_format = { type: "json_object" };
+  }
+
+  const completion = await openrouter.chat.completions.create(params);
+  return completion.choices[0].message.content;
+}
 
 router.post("/analyze-conversation", async (req, res) => {
   try {
@@ -59,61 +74,57 @@ router.post("/analyze-conversation", async (req, res) => {
 
     await db.command({ ping: 1 });
 
-    const history = await db
-      .collection("Interactions")
-      .find({ conversationId })
-      .sort({ timestamp: 1 })
-      .toArray();
+    const [history, latestProfileArr] = await Promise.all([
+      db.collection("Interactions")
+        .find({ conversationId, context: "debate" })
+        .sort({ timestamp: 1 })
+        .toArray(),
+      db.collection("profiles")
+        .find({ conversationId })
+        .sort({ timestamp: -1 })
+        .limit(1)
+        .toArray(),
+    ]);
 
     if (!history.length) {
       return res.status(404).json({ error: "No conversation found for this conversationId." });
     }
 
-    const latestProfile = await db
-      .collection("profiles")
-      .find({ conversationId })
-      .sort({ timestamp: -1 })
-      .limit(1)
-      .toArray();
-
     const transcript = formatTranscript(history);
-    const profile = latestProfile[0]?.profile || "No AI profile found.";
+    const profile = latestProfileArr[0]?.profile || "No AI profile found.";
+    const resolvedTopic = topic || history[0]?.topic || "Unknown topic";
+    const resolvedSummary = summary || "No user summary provided.";
 
-    const prompt = buildAnalysisPrompt({
-      topic: topic || history[0]?.topic || "Unknown topic",
-      summary: summary || "No user summary provided.",
-      profile,
-      transcript,
-    });
+    const [philosophicalText, extractorText, dynamicsText] = await Promise.all([
+      callModel(
+        PHILOSOPHICAL_MODEL,
+        buildPhilosophicalPrompt({ topic: resolvedTopic, summary: resolvedSummary, profile, transcript }),
+        false // Claude via OpenRouter: rely on prompt instruction for JSON
+      ),
+      callModel(
+        EXTRACTOR_MODEL,
+        buildExtractorPrompt({ topic: resolvedTopic, summary: resolvedSummary, transcript })
+      ),
+      callModel(
+        DYNAMICS_MODEL,
+        buildDynamicsPrompt({ topic: resolvedTopic, transcript })
+      ),
+    ]);
 
-    let analysisText = "";
+    console.log("🧠 PHILOSOPHICAL:\n", philosophicalText);
+    console.log("📋 EXTRACTOR:\n", extractorText);
+    console.log("🔄 DYNAMICS:\n", dynamicsText);
 
-    if (PROVIDER === "together") {
-      const completion = await together.chat.completions.create({
-        model: TOGETHER_MODEL,
-        messages: [{ role: "system", content: prompt }],
-      });
-      analysisText = completion.choices[0].message.content;
-    } else {
-      const completion = await openai.chat.completions.create({
-        model: OPENAI_MODEL,
-        messages: [{ role: "system", content: prompt }],
-      });
-      analysisText = completion.choices[0].message.content;
+    const philosophical = safeParseAnalysis(philosophicalText);
+    const extracted = safeParseAnalysis(extractorText);
+    const dynamics = safeParseAnalysis(dynamicsText);
+
+    if (!philosophical || !extracted || !dynamics) {
+      console.error("❌ One or more agent outputs failed to parse.");
+      return res.status(500).json({ error: "One or more analysis agents returned invalid JSON." });
     }
-    
-    console.log("🤖 ANALYSIS LLM RESPONSE:\n", analysisText);
 
-    const analysis = safeParseAnalysis(analysisText);
-
-    if (!analysis) {
-        console.log("❌ RAW ANALYSIS TEXT:\n", analysisText);
-
-      return res.status(500).json({
-        error: "Analysis model returned invalid JSON.",
-        raw: analysisText,
-      });
-    }
+    const analysis = { ...philosophical, ...extracted, ...dynamics };
 
     return res.json({ analysis });
   } catch (err) {
