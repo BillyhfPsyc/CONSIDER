@@ -35,37 +35,37 @@ Return JSON in exactly this shape:
   "moralFoundations": [
     {
       "dimension": "Care / Harm",
-      "relevance": "high | moderate | low | absent",
+      "score": 0,
       "explanation": "Cite specific things the user said that draw on concern for suffering or wellbeing. If this dimension did not feature, write: 'This moral consideration did not feature in the conversation.'"
     },
     {
       "dimension": "Fairness / Reciprocity",
-      "relevance": "high | moderate | low | absent",
+      "score": 0,
       "explanation": "Cite specific things the user said relating to justice, rights, equality, or fair treatment. If absent, say so explicitly."
     },
     {
       "dimension": "Liberty / Oppression",
-      "relevance": "high | moderate | low | absent",
+      "score": 0,
       "explanation": "Cite specific things the user said about freedom, autonomy, coercion, or the right to self-determination. If absent, say so explicitly."
     },
     {
       "dimension": "Loyalty / Betrayal",
-      "relevance": "high | moderate | low | absent",
+      "score": 0,
       "explanation": "Cite specific things the user said about group identity, solidarity, national belonging, or in-group obligations. If absent, say so explicitly."
     },
     {
       "dimension": "Authority / Tradition",
-      "relevance": "high | moderate | low | absent",
+      "score": 0,
       "explanation": "Cite specific things the user said about legitimate hierarchy, institutional authority, tradition, or social order. If absent, say so explicitly."
     },
     {
       "dimension": "Sanctity / Purity",
-      "relevance": "high | moderate | low | absent",
+      "score": 0,
       "explanation": "Cite specific things the user said about human dignity, the sacred, the natural, or moral contamination. If absent, say so explicitly."
     }
   ],
   "epistemicHumility": {
-    "score": 1,
+    "score": 0,
     "explanation": "1-3 sentences. Did the user acknowledge uncertainty, qualify their claims, or show any willingness to update during the conversation? Score 1-10: 1 = rigid and unqualified throughout, 10 = consistently open, uncertain, and genuinely responsive to counterarguments."
   },
   "overtonPosition": {
@@ -75,6 +75,13 @@ Return JSON in exactly this shape:
 
 Scoring rules:
 - epistemicHumility score must be an integer from 1 to 10.
+- moralFoundations scores must be integers from 0 to 10.
+- 0 = this dimension was entirely absent from the conversation.
+- 1-3 = briefly implied or touched on.
+- 4-6 = present and moderately relevant to the argument.
+- 7-9 = significant and recurring in the user's reasoning.
+- 10 = central — the argument largely rests on this foundation.
+- Score the user's reasoning only, not the AI's.
 
 Input material:
 
@@ -102,7 +109,7 @@ Be specific and grounded. Base all points only on what was actually said in the 
 
 Distinguish clearly:
 - "keyAgreements": points that were directly and explicitly agreed upon by both sides during the conversation
-- "potentialAgreements": points where agreement seems likely or partially implied, but was not directly stated
+- "potentialAgreements": points where both parties share a genuine underlying value or premise that could form the basis of real agreement — not just both acknowledging a fact, not vague platitudes, not restatements of the disagreement. If no genuine potential agreement exists, return an empty array. Do not invent one.
 
 Return JSON in exactly this shape:
 
@@ -122,7 +129,7 @@ Return JSON in exactly this shape:
   "potentialAgreements": [
     {
       "title": "short title",
-      "summary": "1-2 sentences on why this looks like a likely or partial agreement"
+      "summary": "1-2 sentences on why this looks like a genuine shared value or premise"
     }
   ]
 }

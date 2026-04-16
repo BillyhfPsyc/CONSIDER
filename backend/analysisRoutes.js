@@ -15,7 +15,7 @@ const openrouter = new OpenAI({
 });
 
 const PHILOSOPHICAL_MODEL = "anthropic/claude-sonnet-4-5";
-const EXTRACTOR_MODEL = "openai/gpt-4o-mini";
+const EXTRACTOR_MODEL = "openai/gpt-4o";
 const DYNAMICS_MODEL = "openai/gpt-4o-mini";
 
 function formatTranscript(history) {

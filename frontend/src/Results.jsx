@@ -49,23 +49,25 @@ function Tooltip({ text }) {
   );
 }
 
-const RELEVANCE_STYLES = {
-  high:     { dot: "bg-cyan-400",   text: "text-cyan-300",   label: "High" },
-  moderate: { dot: "bg-amber-400",  text: "text-amber-300",  label: "Moderate" },
-  low:      { dot: "bg-slate-500",  text: "text-slate-400",  label: "Low" },
-  absent:   { dot: "bg-slate-700",  text: "text-slate-600",  label: "Not drawn on" },
-};
+function MoralFoundationRow({ dimension, score, explanation }) {
+  const barColour =
+    score <= 3 ? "bg-slate-500" :
+    score <= 6 ? "bg-cyan-500" :
+                 "bg-cyan-300";
 
-function MoralFoundationRow({ dimension, relevance, explanation }) {
-  const style = RELEVANCE_STYLES[relevance] || RELEVANCE_STYLES.absent;
   return (
-    <div className="bg-slate-800/40 p-4 rounded-xl border border-white/5 space-y-1.5">
-      <div className="flex items-center gap-2">
-        <span className={`w-2 h-2 rounded-full flex-shrink-0 ${style.dot}`} />
+    <div className="bg-slate-800/40 p-4 rounded-xl border border-white/5 space-y-2">
+      <div className="flex justify-between items-center">
         <span className="text-white text-sm font-medium">{dimension}</span>
-        <span className={`ml-auto text-xs ${style.text}`}>{style.label}</span>
+        <span className="text-slate-400 text-xs">{score}/10</span>
       </div>
-      <p className="text-slate-400 text-xs leading-relaxed pl-4">{explanation}</p>
+      <div className="w-full h-1.5 bg-slate-700 rounded-full">
+        <div
+          className={`h-1.5 ${barColour} rounded-full transition-all duration-500`}
+          style={{ width: `${score * 10}%` }}
+        />
+      </div>
+      <p className="text-slate-400 text-xs leading-relaxed">{explanation}</p>
     </div>
   );
 }
@@ -219,21 +221,20 @@ function Results() {
             </div>
           </section>
         )}
-        
 
         {/* 🧭 MORAL FOUNDATIONS */}
         {analysis.moralFoundations?.length > 0 && (
           <section className="space-y-4">
             <div className="flex items-center gap-1">
               <h3 className="text-xl font-semibold text-white">🧭 Moral Foundations</h3>
-              <Tooltip text="Based on Moral Foundations Theory (Haidt). Shows which moral considerations featured in your reasoning and how prominently, with direct reference to what you said." />
+              <Tooltip text="Based on Moral Foundations Theory (Haidt). Scores how prominently each moral consideration featured in your reasoning, with direct reference to what you said. Scored 0–10." />
             </div>
             <div className="space-y-3">
               {analysis.moralFoundations.map((f, i) => (
                 <MoralFoundationRow
                   key={i}
                   dimension={f.dimension}
-                  relevance={f.relevance}
+                  score={f.score}
                   explanation={f.explanation}
                 />
               ))}
