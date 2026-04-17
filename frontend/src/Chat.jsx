@@ -15,13 +15,13 @@ function Chat() {
   const passedConversationId = location.state?.conversationId;
   const summary = location.state?.summary;
   const topic = location.state?.topic;
-  const disagreeability = Number(sessionStorage.getItem("disagreeability") ?? 80); // is this in the correct place??
-
+  const specificFocus = location.state?.specificFocus || null;
+  const disagreeability = Number(sessionStorage.getItem("disagreeability") ?? 80);
 
   const [conversationId, setConversationId] = useState("");
   const [messages, setMessages] = useState([]);
   const [profile, setProfile] = useState("");
-  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(600);
   const [isLoading, setIsLoading] = useState(false);
   const [showTimeWarning, setShowTimeWarning] = useState(false);
   const hasWarned = useRef(false);
@@ -30,57 +30,32 @@ function Chat() {
   const hasSentOpening = useRef(false);
   const messagesEndRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isLoading]);
+  useEffect(() => { scrollToBottom(); }, [messages, isLoading]);
 
-  // Hard redirect to results after 10 minutes
   useEffect(() => {
     const timeout = setTimeout(() => {
-      navigate("/results", {
-        state: {
-          conversationId,
-          topic,
-          summary,
-        },
-      });
+      navigate("/results", { state: { conversationId, topic, summary } });
     }, 10 * 60 * 1000);
-  
     return () => clearTimeout(timeout);
   }, [navigate, conversationId, topic, summary]);
 
-  
-
-  // Countdown timer
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1;
-      });
+      setTimeLeft((prev) => { if (prev <= 1) { clearInterval(interval); return 0; } return prev - 1; });
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
-  // One-minute warning popup (shows for 5 seconds)
   useEffect(() => {
     if (timeLeft === 60 && !hasWarned.current) {
       hasWarned.current = true;
       setShowTimeWarning(true);
-      
       setTimeout(() => setShowTimeWarning(false), 5000);
     }
   }, [timeLeft]);
 
-  // Setup conversation + profile + bot opener
   useEffect(() => {
     if (hasInitialized.current) return;
     hasInitialized.current = true;
@@ -93,13 +68,10 @@ function Chat() {
 
     const startDebate = async (convId) => {
       try {
-        // 1) Generate opposing profile
-        const res = await createProfile(convId, topic, summary);
+        const res = await createProfile(convId, topic, summary, specificFocus);
         const generatedProfile = res.data.profile;
         setProfile(generatedProfile);
-        console.log("✅ Profile generated:", generatedProfile);
 
-        // 2) Bot speaks first (only once)
         if (!hasSentOpening.current) {
           hasSentOpening.current = true;
           setIsLoading(true);
@@ -113,13 +85,11 @@ function Chat() {
             topic,
             summary,
             generatedProfile,
-            disagreeability
+            disagreeability,
+            specificFocus
           );
 
-          const openerReply = openerRes.data.reply;
-
-          // Show only the bot opener in the UI
-          setMessages([{ sender: "bot", text: openerReply }]);
+          setMessages([{ sender: "bot", text: openerRes.data.reply }]);
           setIsLoading(false);
         }
       } catch (err) {
@@ -141,10 +111,10 @@ function Chat() {
 
   const handleChooseAnotherTopic = () => {
     sessionStorage.removeItem("conversationId");
-    sessionStorage.removeItem("disagreeability"); // optional but recommended
+    sessionStorage.removeItem("disagreeability");
     navigate("/select-rvd");
-  }; // new feature button
-  
+  };
+
   const handleSendMessage = async (content) => {
     const text = content.trim();
     if (!text || isLoading) return;
@@ -153,31 +123,18 @@ function Chat() {
     setIsLoading(true);
 
     try {
-      const res = await sendDebateChat(conversationId, text, topic, summary, profile, disagreeability);
-      const reply = res.data.reply;
-      setMessages((prev) => [...prev, { sender: "bot", text: reply }]);
+      const res = await sendDebateChat(conversationId, text, topic, summary, profile, disagreeability, specificFocus);
+      setMessages((prev) => [...prev, { sender: "bot", text: res.data.reply }]);
     } catch (err) {
       console.error("Chat API error:", err);
-      setMessages((prev) => [
-        ...prev,
-        {
-          sender: "bot",
-          text: "Sorry, something went wrong while generating a reply.",
-        },
-      ]);
+      setMessages((prev) => [...prev, { sender: "bot", text: "Sorry, something went wrong while generating a reply." }]);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleEndConversation = () => {
-    navigate("/results", {
-      state: {
-        conversationId,
-        topic,
-        summary,
-      },
-    });
+    navigate("/results", { state: { conversationId, topic, summary } });
   };
 
   const minutes = Math.floor(timeLeft / 60);
@@ -187,7 +144,6 @@ function Chat() {
   return (
     <Layout timerDisplay={timerDisplay}>
       <div className="flex flex-col min-h-[calc(100vh-8rem)]">
-        {/* One-minute warning popup */}
         <AnimatePresence>
           {showTimeWarning && (
             <motion.div
@@ -199,30 +155,28 @@ function Chat() {
             >
               <div className="bg-slate-900 border border-cyan-400/40 px-8 py-6 rounded-2xl shadow-xl text-white text-center">
                 <h2 className="text-3xl font-bold mb-4">⏰ Time is running out!</h2>
-                <p className="text-lg">
-                  Less than one minute remaining — wrap up your final points!
-                </p>
+                <p className="text-lg">Less than one minute remaining — wrap up your final points!</p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Messages area */}
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-4xl mx-auto px-6 py-8 min-h-[60vh]">
             <div className="rounded-3xl border border-white/10 bg-slate-900/40 shadow-xl shadow-black/30 p-6 md:p-8 flex flex-col gap-6">
-              {/* Header */}
               <div className="text-center mb-2 space-y-2">
-                <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
-                  Discussion
-                </h1>
+                <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Discussion</h1>
                 <p className="text-sm md:text-base text-slate-200 max-w-2xl mx-auto">
                   You will now engage in a discussion with an AI that has an opposing opinion to you.
                   Freely discuss the topic as you would with another person.
                 </p>
+                {specificFocus && (
+                  <p className="text-xs text-cyan-400/80">
+                    Focus: "{specificFocus}"
+                  </p>
+                )}
               </div>
 
-              {/* Messages */}
               {messages.length === 0 ? (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -232,52 +186,31 @@ function Chat() {
                   <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/20 flex items-center justify-center mx-auto mb-6">
                     <Sparkles className="w-10 h-10 text-cyan-400" />
                   </div>
-
-                  <h2 className="text-2xl font-semibold text-white mb-3">
-                    Starting the discussion...
-                  </h2>
-
-                  <p className="text-slate-400 max-w-md mx-auto mb-2">
-                    The AI will begin in a moment.
-                  </p>
+                  <h2 className="text-2xl font-semibold text-white mb-3">Starting the discussion...</h2>
+                  <p className="text-slate-400 max-w-md mx-auto mb-2">The AI will begin in a moment.</p>
                 </motion.div>
               ) : (
                 <div className="space-y-6 flex-1 flex flex-col">
                   <AnimatePresence mode="popLayout">
                     {messages.map((m, i) => (
-                      <MessageBubble
-                        key={`${m.sender}-${i}`}
-                        message={m.text}
-                        isUser={m.sender === "user"}
-                      />
+                      <MessageBubble key={`${m.sender}-${i}`} message={m.text} isUser={m.sender === "user"} />
                     ))}
                   </AnimatePresence>
 
                   {isLoading && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex gap-3 max-w-3xl"
-                    >
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex gap-3 max-w-3xl">
                       <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
                         <Sparkles className="w-4 h-4 text-white" />
                       </div>
                       <div className="px-5 py-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10">
                         <div className="flex gap-1.5">
                           <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" />
-                          <span
-                            className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce"
-                            style={{ animationDelay: "150ms" }}
-                          />
-                          <span
-                            className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce"
-                            style={{ animationDelay: "300ms" }}
-                          />
+                          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: "150ms" }} />
+                          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: "300ms" }} />
                         </div>
                       </div>
                     </motion.div>
                   )}
-
                   <div ref={messagesEndRef} />
                 </div>
               )}
@@ -285,11 +218,9 @@ function Chat() {
           </div>
         </div>
 
-        {/* Input + end button */}
         <div className="border-t border-white/5">
           <div className="max-w-4xl mx-auto px-6 py-4 space-y-3">
             <ChatInput onSend={handleSendMessage} isLoading={isLoading} />
-
             <div className="flex justify-center gap-3">
               <button
                 type="button"
@@ -298,14 +229,13 @@ function Chat() {
               >
                 Choose another topic
               </button>
-
               <button
                 type="button"
                 onClick={handleEndConversation}
                 className="inline-flex items-center justify-center rounded-full bg-white/5 px-4 py-2 text-xs md:text-sm font-semibold text-slate-200 border border-white/15 hover:bg-white/10 hover:border-cyan-400/60 transition-colors"
               >
                 End conversation and see results
-              </button> 
+              </button>
             </div>
           </div>
         </div>
