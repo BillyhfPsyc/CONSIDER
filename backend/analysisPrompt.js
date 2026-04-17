@@ -12,16 +12,16 @@ Return JSON in exactly this shape:
 
 {
   "userProfile": {
-    "label": "short descriptive label for the user's position",
+    "label": "short label capturing the user's core value identity — e.g. 'Harm reductionist' or 'Civil libertarian'",
     "summary": "2-4 sentence summary of the user's worldview and stance as shown in the conversation",
-    "coreValues": ["value 1", "value 2", "value 3"],
-    "reasoningStyle": "brief description of how they argue — e.g. appeals to evidence, lived experience, moral principle, intuition"
+    "coreValues": ["specific moral value or commitment 1", "specific moral value or commitment 2", "specific moral value or commitment 3"],
+    "reasoningStyle": "one short plain phrase under 8 words — e.g. 'Evidence-first, pragmatic' or 'Principle-led, intuition-grounded'"
   },
   "aiProfile": {
-    "label": "short descriptive label for the AI's position",
+    "label": "short label capturing the AI's core value identity",
     "summary": "2-4 sentence summary of the AI's worldview and stance",
-    "coreValues": ["value 1", "value 2", "value 3"],
-    "reasoningStyle": "brief description"
+    "coreValues": ["specific moral value or commitment 1", "specific moral value or commitment 2", "specific moral value or commitment 3"],
+    "reasoningStyle": "one short plain phrase under 8 words"
   },
   "disagreementType": {
     "classification": "empirical | principled | mixed",
@@ -66,7 +66,7 @@ Return JSON in exactly this shape:
   ],
   "epistemicHumility": {
     "score": 0,
-    "explanation": "1-3 sentences. Did the user acknowledge uncertainty, qualify their claims, or show any willingness to update during the conversation? Score 1-10: 1 = rigid and unqualified throughout, 10 = consistently open, uncertain, and genuinely responsive to counterarguments."
+    "explanation": "1-3 sentences assessing how openly the user held their position. Epistemic humility is about HOW you argue, not whether you changed your mind or agreed. A person can firmly disagree throughout and still score highly if they qualified their claims, acknowledged uncertainty, recognised the limits of their knowledge, or engaged seriously with the strongest counterarguments. Score 1-10: 1 = all claims stated with absolute certainty, counterarguments dismissed or ignored; 10 = claims consistently qualified, uncertainty acknowledged, opposing arguments engaged with seriously and charitably even while disagreeing."
   },
   "overtonPosition": {
     "description": "2-4 sentences. Where does the user's position sit relative to mainstream public discourse and, where relevant, academic or policy debate on this topic? Avoid partisan labels. Be specific about what makes this position mainstream, marginal, or somewhere in between."
@@ -149,30 +149,4 @@ ${transcript || "No transcript provided."}
 `.trim();
 }
 
-function buildDynamicsPrompt({ topic, transcript }) {
-  return `
-You are analyzing the conversational dynamics of a structured disagreement debate.
-
-Return valid JSON only. No markdown, no backticks, no text before or after the JSON.
-
-Return JSON in exactly this shape:
-
-{
-  "conversationDynamics": {
-    "tone": "brief description of the overall emotional and rhetorical tone — e.g. calm and analytical, tense, dismissive, exploratory",
-    "movement": "did either side shift, clarify, soften, harden, or remain static across the conversation?",
-    "notes": "1-3 sentences interpreting the character of the exchange as a whole"
-  }
-}
-
-Input material:
-
-TOPIC:
-${topic || "Unknown topic"}
-
-TRANSCRIPT:
-${transcript || "No transcript provided."}
-`.trim();
-}
-
-module.exports = { buildPhilosophicalPrompt, buildExtractorPrompt, buildDynamicsPrompt };
+module.exports = { buildPhilosophicalPrompt, buildExtractorPrompt };

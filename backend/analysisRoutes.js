@@ -4,8 +4,7 @@ const database = require("./connect.js");
 const {
   buildPhilosophicalPrompt,
   buildExtractorPrompt,
-  buildDynamicsPrompt,
-} = require("./analysisPrompt");
+} = require("./analysisPrompts");
 
 const OpenAI = require("openai");
 
@@ -16,7 +15,6 @@ const openrouter = new OpenAI({
 
 const PHILOSOPHICAL_MODEL = "anthropic/claude-sonnet-4-5";
 const EXTRACTOR_MODEL = "openai/gpt-4o";
-const DYNAMICS_MODEL = "openai/gpt-4o-mini";
 
 function formatTranscript(history) {
   return history
@@ -95,36 +93,30 @@ router.post("/analyze-conversation", async (req, res) => {
     const resolvedTopic = topic || history[0]?.topic || "Unknown topic";
     const resolvedSummary = summary || "No user summary provided.";
 
-    const [philosophicalText, extractorText, dynamicsText] = await Promise.all([
+    const [philosophicalText, extractorText] = await Promise.all([
       callModel(
         PHILOSOPHICAL_MODEL,
         buildPhilosophicalPrompt({ topic: resolvedTopic, summary: resolvedSummary, profile, transcript }),
-        false // Claude via OpenRouter: rely on prompt instruction for JSON
+        false
       ),
       callModel(
         EXTRACTOR_MODEL,
         buildExtractorPrompt({ topic: resolvedTopic, summary: resolvedSummary, transcript })
       ),
-      callModel(
-        DYNAMICS_MODEL,
-        buildDynamicsPrompt({ topic: resolvedTopic, transcript })
-      ),
     ]);
 
     console.log("🧠 PHILOSOPHICAL:\n", philosophicalText);
     console.log("📋 EXTRACTOR:\n", extractorText);
-    console.log("🔄 DYNAMICS:\n", dynamicsText);
 
     const philosophical = safeParseAnalysis(philosophicalText);
     const extracted = safeParseAnalysis(extractorText);
-    const dynamics = safeParseAnalysis(dynamicsText);
 
-    if (!philosophical || !extracted || !dynamics) {
+    if (!philosophical || !extracted) {
       console.error("❌ One or more agent outputs failed to parse.");
       return res.status(500).json({ error: "One or more analysis agents returned invalid JSON." });
     }
 
-    const analysis = { ...philosophical, ...extracted, ...dynamics };
+    const analysis = { ...philosophical, ...extracted };
 
     return res.json({ analysis });
   } catch (err) {
