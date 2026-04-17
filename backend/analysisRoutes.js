@@ -4,7 +4,7 @@ const database = require("./connect.js");
 const {
   buildPhilosophicalPrompt,
   buildExtractorPrompt,
-} = require("./analysisPrompts");
+} = require("./analysisPrompt");
 
 const OpenAI = require("openai");
 
