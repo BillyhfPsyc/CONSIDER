@@ -36,10 +36,10 @@ function Chat() {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      navigate("/results", { state: { conversationId, topic, summary } });
+      navigate("/results", { state: { conversationId, topic, summary, messages } });
     }, 10 * 60 * 1000);
     return () => clearTimeout(timeout);
-  }, [navigate, conversationId, topic, summary]);
+  }, [navigate, conversationId, topic, summary, messages]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -134,7 +134,7 @@ function Chat() {
   };
 
   const handleEndConversation = () => {
-    navigate("/results", { state: { conversationId, topic, summary } });
+    navigate("/results", { state: { conversationId, topic, summary, messages } });
   };
 
   const minutes = Math.floor(timeLeft / 60);

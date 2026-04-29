@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { analyzeConversation } from "./api";
+import MessageBubble from "./components/chat/MessageBubble.jsx";
 import "./Results.css";
 
 function ScoreBar({ label, score, explanation }) {
@@ -122,9 +123,11 @@ function Results() {
   const conversationId = location.state?.conversationId;
   const topic = location.state?.topic;
   const summary = location.state?.summary;
+  const messages = location.state?.messages ?? [];
 
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showTranscript, setShowTranscript] = useState(false);
 
   useEffect(() => {
     const fetchAnalysis = async () => {
@@ -338,6 +341,30 @@ function Results() {
             <SectionTitle>Where You Stand</SectionTitle>
             <p className="text-slate-300 text-sm">{analysis.overtonPosition.description}</p>
           </SectionCard>
+        )}
+
+        {/* REVIEW DISCUSSION */}
+        {messages.length > 0 && (
+          <div className="border border-white/5 rounded-2xl overflow-hidden">
+            <button
+              onClick={() => setShowTranscript((prev) => !prev)}
+              className="w-full flex items-center justify-between px-6 py-4 bg-black/20 hover:bg-black/30 transition-colors text-left"
+            >
+              <span className="text-sm font-semibold uppercase tracking-widest text-slate-400">
+                Review Discussion
+              </span>
+              <span className="text-slate-500 text-xs">
+                {showTranscript ? "▲ Hide" : "▼ Show"}
+              </span>
+            </button>
+            {showTranscript && (
+              <div className="px-6 py-6 space-y-6 bg-slate-900/40">
+                {messages.map((m, i) => (
+                  <MessageBubble key={i} message={m.text} isUser={m.sender === "user"} />
+                ))}
+              </div>
+            )}
+          </div>
         )}
 
         {/* CTA */}
