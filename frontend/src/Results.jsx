@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { analyzeConversation } from "./api";
 import "./Results.css";
 
@@ -118,6 +118,7 @@ const DISAGREEMENT_TYPE_TOOLTIPS = {
 
 function Results() {
   const location = useLocation();
+  const navigate = useNavigate();
   const conversationId = location.state?.conversationId;
   const topic = location.state?.topic;
   const summary = location.state?.summary;
@@ -271,7 +272,6 @@ function Results() {
           </SectionCard>
         )}
 
-
         {/* NATURE OF THE DISAGREEMENT */}
         {analysis.disagreementType && (
           <SectionCard>
@@ -342,18 +342,25 @@ function Results() {
 
         {/* CTA */}
         <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row gap-3 justify-center">
-          <a
-            href="/select-rvd"
+          <button
+            onClick={() => {
+              sessionStorage.removeItem("conversationId");
+              sessionStorage.removeItem("disagreeability");
+              navigate("/select-rvd");
+            }}
             className="text-center px-6 py-3 rounded-xl bg-cyan-500/10 border border-cyan-400/20 text-cyan-300 hover:bg-cyan-500/20 transition-colors text-sm font-medium"
           >
             Try another topic
-          </a>
-          <a
-            href="/"
+          </button>
+          <button
+            onClick={() => {
+              sessionStorage.removeItem("conversationId");
+              navigate("/");
+            }}
             className="text-center px-6 py-3 rounded-xl bg-slate-700/50 border border-white/10 text-slate-300 hover:bg-slate-700 transition-colors text-sm font-medium"
           >
             Back to home
-          </a>
+          </button>
         </div>
 
       </div>
