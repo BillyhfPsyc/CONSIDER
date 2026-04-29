@@ -255,5 +255,10 @@ The project is structured for straightforward deployment:
 
 ---
 
-CONSDIER can be used at consider-chi.vercel.app
-The application is currently password protected. If you would like access to the site, please get in touch with david.lyreskog@psych.ox.ac.uk with a request for the password and your inteded usage.
+CONSIDER can be accessed at: https://consider-chi.vercel.app
+
+The application is currently password protected.
+
+If you would like access, please contact  
+david.lyreskog@psych.ox.ac.uk  
+with a request for the password and a brief description of your intended usage..
