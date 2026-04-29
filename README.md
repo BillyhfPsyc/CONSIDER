@@ -24,7 +24,7 @@ It is designed as a browser-based MVP with a modular LLM backend and post-conver
   - moral foundations scoring (Haidt)
   - epistemic humility rating
 - Reviewable discussion transcript inline on the results page
-- Multi-provider LLM support (OpenAI, Together AI, OpenRouter)
+- Multi-provider LLM support (GPT, Llama from TogetherAI & OpenRouter)
 - Frontend + backend separation for easy iteration
 
 ---
