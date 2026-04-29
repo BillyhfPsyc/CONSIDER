@@ -255,18 +255,3 @@ The project is structured for straightforward deployment:
 
 ---
 
-## Contributing
-
-This is an early-stage MVP. If you'd like to contribute:
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Commit your changes: `git commit -m 'add my feature'`
-4. Push to the branch: `git push origin feature/my-feature`
-5. Open a pull request
-
----
-
-## License
-
-MIT
