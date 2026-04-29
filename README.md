@@ -23,7 +23,6 @@ It is designed as a browser-based MVP with a modular LLM backend and post-conver
   - nature and root of the disagreement
   - moral foundations scoring (Haidt)
   - epistemic humility rating
-  - political/ideological positioning
 - Reviewable discussion transcript inline on the results page
 - Multi-provider LLM support (OpenAI, Together AI, OpenRouter)
 - Frontend + backend separation for easy iteration
