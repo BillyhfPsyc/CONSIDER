@@ -221,6 +221,57 @@ function Results() {
           </div>
         </SectionCard>
 
+        {/* KEY DISAGREEMENTS */}
+        <SectionCard>
+          <SectionTitle>Key Disagreements</SectionTitle>
+          {analysis.keyDisagreements.length === 0 ? (
+            <p className="text-slate-400 text-sm italic">No clear disagreements identified.</p>
+          ) : (
+            <div className="space-y-4">
+              {analysis.keyDisagreements.map((item, i) => (
+                <div key={i} className="bg-red-500/10 border border-red-400/20 p-4 rounded-xl">
+                  <p className="font-semibold text-white">{item.title}</p>
+                  <p className="text-slate-300 text-sm mt-1">{item.summary}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </SectionCard>
+
+        {/* KEY AGREEMENTS */}
+        <SectionCard>
+          <SectionTitle>Key Agreements</SectionTitle>
+          {analysis.keyAgreements.length === 0 ? (
+            <p className="text-slate-400 text-sm italic">No clear agreement between parties.</p>
+          ) : (
+            <div className="space-y-4">
+              {analysis.keyAgreements.map((item, i) => (
+                <div key={i} className="bg-green-500/10 border border-green-400/20 p-4 rounded-xl">
+                  <p className="font-semibold text-white">{item.title}</p>
+                  <p className="text-slate-300 text-sm mt-1">{item.summary}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </SectionCard>
+
+        {/* POTENTIAL COMMON GROUND */}
+        {analysis.potentialAgreements?.length > 0 && (
+          <SectionCard>
+            <SectionTitle>Potential Common Ground</SectionTitle>
+            <p className="text-xs text-slate-500 mb-4">Points where agreement may be possible, but wasn't directly stated.</p>
+            <div className="space-y-4">
+              {analysis.potentialAgreements.map((item, i) => (
+                <div key={i} className="bg-amber-500/10 border border-dashed border-amber-400/30 p-4 rounded-xl">
+                  <p className="font-semibold text-white">{item.title}</p>
+                  <p className="text-slate-300 text-sm mt-1">{item.summary}</p>
+                </div>
+              ))}
+            </div>
+          </SectionCard>
+        )}
+
+
         {/* NATURE OF THE DISAGREEMENT */}
         {analysis.disagreementType && (
           <SectionCard>
@@ -286,56 +337,6 @@ function Results() {
           <SectionCard>
             <SectionTitle>Where You Stand</SectionTitle>
             <p className="text-slate-300 text-sm">{analysis.overtonPosition.description}</p>
-          </SectionCard>
-        )}
-
-        {/* KEY DISAGREEMENTS */}
-        <SectionCard>
-          <SectionTitle>Key Disagreements</SectionTitle>
-          {analysis.keyDisagreements.length === 0 ? (
-            <p className="text-slate-400 text-sm italic">No clear disagreements identified.</p>
-          ) : (
-            <div className="space-y-4">
-              {analysis.keyDisagreements.map((item, i) => (
-                <div key={i} className="bg-red-500/10 border border-red-400/20 p-4 rounded-xl">
-                  <p className="font-semibold text-white">{item.title}</p>
-                  <p className="text-slate-300 text-sm mt-1">{item.summary}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </SectionCard>
-
-        {/* KEY AGREEMENTS */}
-        <SectionCard>
-          <SectionTitle>Key Agreements</SectionTitle>
-          {analysis.keyAgreements.length === 0 ? (
-            <p className="text-slate-400 text-sm italic">No clear agreement between parties.</p>
-          ) : (
-            <div className="space-y-4">
-              {analysis.keyAgreements.map((item, i) => (
-                <div key={i} className="bg-green-500/10 border border-green-400/20 p-4 rounded-xl">
-                  <p className="font-semibold text-white">{item.title}</p>
-                  <p className="text-slate-300 text-sm mt-1">{item.summary}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </SectionCard>
-
-        {/* POTENTIAL COMMON GROUND */}
-        {analysis.potentialAgreements?.length > 0 && (
-          <SectionCard>
-            <SectionTitle>Potential Common Ground</SectionTitle>
-            <p className="text-xs text-slate-500 mb-4">Points where agreement may be possible, but wasn't directly stated.</p>
-            <div className="space-y-4">
-              {analysis.potentialAgreements.map((item, i) => (
-                <div key={i} className="bg-amber-500/10 border border-dashed border-amber-400/30 p-4 rounded-xl">
-                  <p className="font-semibold text-white">{item.title}</p>
-                  <p className="text-slate-300 text-sm mt-1">{item.summary}</p>
-                </div>
-              ))}
-            </div>
           </SectionCard>
         )}
 

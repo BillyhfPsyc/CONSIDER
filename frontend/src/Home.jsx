@@ -269,11 +269,6 @@ export default function Home() {
                       : "border-white/10 shadow-black/30 opacity-40"
                   }`}
                 >
-                  {stage.id === 3 && (
-                    <div className="inline-block mb-3 px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/50">
-                      <span className="text-xs font-semibold text-yellow-300">Coming Soon</span>
-                    </div>
-                  )}
                   <div className="mb-3 flex justify-center">
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
@@ -382,7 +377,7 @@ export default function Home() {
               <p>
                 If you have questions, concerns, or would like further information about this project, please contact{" "}
                 <a
-                  href="mailto:billy.hohnen-ford@psych.ox.ac.uk"
+                  href="mailto:david.lyreskog@psych.ox.ac.uk"
                   className="text-cyan-400 hover:text-cyan-300 transition-colors"
                 >
                   david.lyreskog@psych.ox.ac.uk
