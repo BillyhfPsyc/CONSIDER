@@ -14,9 +14,9 @@ It is designed as a browser-based MVP with a modular LLM backend and post-conver
 ## Features
 
 - Three-stage flow: **Clarification → Conversation → Contemplation**
-- Configurable disagreement intensity for debate behaviour
+- Configurable disagreement intensity for discussion behaviour
 - AI-generated counter-position profile tailored to oppose the user's stated stance
-- Optional specific focus — ground the debate in a concrete case rather than an abstract topic
+- Optional specific focus — ground the discussion in a concrete case rather than an abstract topic
 - Structured post-conversation analysis:
   - key disagreements and agreements
   - potential common ground
@@ -57,7 +57,7 @@ CONSIDER/
 │   │   ├── RVDSelect.jsx            # Topic selection
 │   │   ├── toggle.jsx               # Disagreeability + focus config
 │   │   ├── CurrentPosition.jsx      # Position clarification chat
-│   │   ├── Chat.jsx                 # Debate chat interface
+│   │   ├── Chat.jsx                 # Discussion chat interface
 │   │   ├── Results.jsx              # Post-conversation analysis
 │   │   └── components/
 │   │       └── chat/
@@ -86,7 +86,7 @@ CONSIDER/
 /select-rvd       → user picks a topic
 /toggle           → sets disagreeability level + optional specific focus
 /current-position → clarification chat (AI extracts user's position)
-/play             → debate chat (AI argues the opposing side)
+/play             → disagreement chat (AI argues the opposing side)
 /results          → full post-conversation analysis
 ```
 
@@ -189,14 +189,14 @@ The app will be available at `http://localhost:5173`.
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/chat` | Send a message in either clarification or debate context |
+| `POST` | `/chat` | Send a message in either clarification or disagreement context |
 | `POST` | `/generate-profile` | Generate a fictional AI opponent profile based on the user's position |
 
 ### Analysis
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/analyze-conversation` | Run full post-conversation analysis on a completed debate |
+| `POST` | `/analyze-conversation` | Run full post-conversation analysis on a completed discussion |
 
 ### Other
 
@@ -210,7 +210,7 @@ The app will be available at `http://localhost:5173`.
 
 CONSIDER is designed to work with multiple LLM providers:
 
-**Chat (debate + clarification):**
+**Chat (discussion + clarification):**
 - `openai` — uses `gpt-4o-mini`
 - `together` — uses `meta-llama/Llama-3.3-70B-Instruct-Turbo`
 
