@@ -33,11 +33,11 @@ It is designed as a browser-based MVP with a modular LLM backend and post-conver
 
 | Layer | Technology |
 |---|---|
-| Frontend | React 19 + Vite |
+| Frontend | React + Vite |
 | Styling | Tailwind CSS + Framer Motion |
-| Backend | Node.js + Express 5 |
-| Database | MongoDB (Mongoose) |
-| Chat model | OpenAI (`gpt-4o-mini`) or Together AI (`Llama-3.3-70B`) |
+| Backend | Node.js + Express |
+| Database | MongoDB |
+| Chat model | OpenAI (`gpt-4o-mini`) or Llama (`Llama-3.3-70B`) |
 | Analysis model | Claude (`claude-sonnet-4-5`) via OpenRouter + `gpt-4o` for extraction |
 
 ---
