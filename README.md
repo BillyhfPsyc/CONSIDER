@@ -37,7 +37,7 @@ It is designed as a browser-based MVP with a modular LLM backend and post-conver
 | Styling | Tailwind CSS + Framer Motion |
 | Backend | Node.js + Express |
 | Database | MongoDB |
-| Chat model | OpenAI (`gpt-4o-mini`) or Llama (`Llama-3.3-70B`) |
+| Chat model | OpenAI (`gpt-4o-mini`) or Llama (`Llama-3.3-70B`) - set to Llama in this repo |
 | Analysis model | Claude (`claude-sonnet-4-5`) via OpenRouter + `gpt-4o` for extraction |
 
 ---
@@ -50,7 +50,6 @@ CONSIDER/
 │   ├── src/
 │   │   ├── App.jsx                  # Routes
 │   │   ├── api.js                   # Axios API calls
-│   │   ├── prompts.js               # Client-side prompt builders
 │   │   ├── Home.jsx                 # Landing page
 │   │   ├── Access.jsx               # Password gate
 │   │   ├── DebateIntro.jsx          # Intro screen
@@ -69,6 +68,7 @@ CONSIDER/
     ├── server.js                    # Entry point, middleware, route mounting
     ├── connect.js                   # MongoDB connection
     ├── chatRoutes.js                # /chat and /generate-profile endpoints
+    ├── prompts.js                   # Prompt builders
     ├── analysisRoutes.js            # /analyze-conversation endpoint
     ├── analysisPrompt.js            # Analysis prompt builders
     ├── config.env.example           # Environment variable template
@@ -96,7 +96,7 @@ CONSIDER/
 
 ### Prerequisites
 
-- Node.js v18+
+- Node.js
 - A MongoDB Atlas account (or local MongoDB instance)
 - API keys for at least one LLM provider (see below)
 

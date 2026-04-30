@@ -1,28 +1,19 @@
-// chatRoutes.js
-// Could make this cleaner so I can more easily add models?
-
 const express = require("express");
 const router = express.Router();
 const database = require("./connect.js");
 
 const OpenAI = require("openai");
 const Together = require("together-ai");
+const { SUMMARY_PROMPT, DEBATE_PROMPT, PROFILE_PROMPT } = require("./prompts");
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 
-// 🔧 Choose provider ONCE here: "openai" or "together"
 const PROVIDER = process.env.LLM_PROVIDER || "openai";
-
-// Default models for each provider
-const OPENAI_MODEL = "gpt-4o-mini"; // adjust if you like
+const OPENAI_MODEL = "gpt-4o-mini";
 const TOGETHER_MODEL = "meta-llama/Llama-3.3-70B-Instruct-Turbo";
 
 
-/**
- * POST /chat
- * Handles full chat flow for both 'position_clarification' and 'debate' contexts.
- */
 router.post("/chat", async (req, res) => {
   try {
     console.log("⚡️ [chatRoutes] Received /chat request:", req.body);
@@ -32,11 +23,10 @@ router.post("/chat", async (req, res) => {
       topic,
       context,
       positionSummary,
-      systemPrompt,
-      disagreeability // NEW
+      disagreeability,
+      specificFocus
     } = req.body;
 
-    // 🧱 Required field validation
     if (!conversationId) {
       return res.status(400).json({ error: "`conversationId` is required." });
     }
@@ -44,21 +34,28 @@ router.post("/chat", async (req, res) => {
       return res.status(400).json({ error: "`message` is required." });
     }
     if (!context || !["position_clarification", "debate"].includes(context)) {
-      return res
-        .status(400)
-        .json({ error: "`context` must be 'position_clarification' or 'debate'." });
-    }
-    if (!systemPrompt) {
-      return res.status(400).json({ error: "`systemPrompt` is required." });
+      return res.status(400).json({ error: "`context` must be 'position_clarification' or 'debate'." });
     }
 
-    // 🧠 Connect to DB
     const db = database.getDB();
     if (!db) return res.status(500).json({ error: "Database not initialized." });
     await db.command({ ping: 1 });
     console.log("✅ MongoDB ping successful");
 
-    // 💾 Save user message
+    // Build system prompt server-side
+    let systemPrompt;
+    if (context === "position_clarification") {
+      systemPrompt = SUMMARY_PROMPT(topic, specificFocus);
+    } else {
+      const latestProfileArr = await db.collection("profiles")
+        .find({ conversationId })
+        .sort({ timestamp: -1 })
+        .limit(1)
+        .toArray();
+      const profile = latestProfileArr[0]?.profile || "";
+      systemPrompt = DEBATE_PROMPT(topic, profile, positionSummary, disagreeability, specificFocus);
+    }
+
     console.log("🔍 Inserting user message:", userMessage);
     const userResult = await db.collection("Interactions").insertOne({
       conversationId,
@@ -71,31 +68,23 @@ router.post("/chat", async (req, res) => {
     });
     console.log("✅ User message saved with _id:", userResult.insertedId);
 
-    // 📜 Load conversation history
     const history = await db
       .collection("Interactions")
       .find({ conversationId })
       .sort({ timestamp: 1 })
-      .limit(60) // limit to last 40 messages to control token usage
+      .limit(60)
       .toArray();
 
-    // 🧠 Prepare prompt
-    const systemPromptMessage = { role: "system", content: systemPrompt };
     let messagesForAI = [
-      systemPromptMessage,
+      { role: "system", content: systemPrompt },
       ...history.map((msg) => ({ role: msg.role, content: msg.content }))
     ];
 
-    // ✍️ Inject topic + user position if debate is just starting
     if (context === "debate" && history.length <= 2 && topic && positionSummary) {
       messagesForAI.splice(1, 0, { role: "user", content: `Topic: ${topic}` });
-      messagesForAI.splice(2, 0, {
-        role: "user",
-        content: `User position: ${positionSummary}`
-      });
+      messagesForAI.splice(2, 0, { role: "user", content: `User position: ${positionSummary}` });
     }
 
-    // 🤖 Generate response from chosen provider
     let assistantReply = "";
 
     if (PROVIDER === "together") {
@@ -113,7 +102,6 @@ router.post("/chat", async (req, res) => {
       assistantReply = completion.choices[0].message.content;
     }
 
-    // 💾 Save assistant reply
     console.log("🔍 Inserting assistant reply:", assistantReply);
     const botResult = await db.collection("Interactions").insertOne({
       conversationId,
@@ -133,26 +121,22 @@ router.post("/chat", async (req, res) => {
   }
 });
 
-/**
- * POST /generate-profile
- * Generates a fictional profile that disagrees with the user's position.
- * Expects: { conversationId, topic, positionSummary, systemPrompt, message }
- * Returns: { profile: "..." }
- */
+
 router.post("/generate-profile", async (req, res) => {
   try {
     const {
       conversationId,
       topic,
       positionSummary: summary,
-      systemPrompt,
-      message
+      specificFocus
     } = req.body;
 
-    // ✅ Validate input
-    if (!conversationId || !topic || !summary || !systemPrompt || !message) {
+    if (!conversationId || !topic || !summary) {
       return res.status(400).json({ error: "Missing required fields." });
     }
+
+    const systemPrompt = PROFILE_PROMPT(topic, summary, undefined, specificFocus);
+    const message = "Generate a fictional profile of someone who disagrees with me.";
 
     let completion;
 
@@ -177,7 +161,6 @@ router.post("/generate-profile", async (req, res) => {
     const profile = completion.choices[0].message.content;
     console.log("🎭 Generated fictional profile:", profile);
 
-    // ✅ Save the profile to the database
     const db = database.getDB();
     await db.collection("profiles").insertOne({
       conversationId,
