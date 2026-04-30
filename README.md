@@ -262,3 +262,6 @@ The application is currently password protected.
 If you would like access, please contact  
 david.lyreskog@psych.ox.ac.uk  
 with a request for the password and a brief description of your intended usage..
+
+## Licence
+© 2026 Design Bioethics Lab, Department of Psychiatry, University of Oxford. Licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) — free to use and adapt for non-commercial purposes with attribution.
